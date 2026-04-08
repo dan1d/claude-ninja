@@ -158,6 +158,40 @@ echo "      NOTE: These paths assume your projects live at ~/claude-projects/the
 echo "      If they're elsewhere, copy manually from $SCRIPT_DIR/memory/"
 
 # ──────────────────────────────────────
+# 7b. Auto-route PostToolUse hook
+# ──────────────────────────────────────
+echo ""
+echo "[7b] Installing auto-route hook..."
+mkdir -p "$CLAUDE_DIR/hooks"
+cp "$SCRIPT_DIR/src/hooks/auto-route.js" "$CLAUDE_DIR/hooks/auto-route.js"
+echo "      Copied auto-route.js to $CLAUDE_DIR/hooks/"
+
+# Merge hook entry into ~/.claude/settings.json (non-destructive)
+node - <<'JSEOF'
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+const settingsPath = path.join(os.homedir(), '.claude', 'settings.json');
+let settings = {};
+try { settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8')); } catch (_) {}
+if (!settings.hooks) settings.hooks = {};
+if (!Array.isArray(settings.hooks.PostToolUse)) settings.hooks.PostToolUse = [];
+const already = settings.hooks.PostToolUse.some(
+  e => Array.isArray(e.hooks) && e.hooks.some(h => h.command && h.command.includes('auto-route'))
+);
+if (!already) {
+  settings.hooks.PostToolUse.push({
+    matcher: 'Edit|Write|MultiEdit',
+    hooks: [{ type: 'command', command: 'node ~/.claude/hooks/auto-route.js', timeout: 5 }]
+  });
+  fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2) + '\n', 'utf8');
+  console.log('      Added auto-route hook to ~/.claude/settings.json');
+} else {
+  console.log('      Auto-route hook already in settings.json — skipped');
+}
+JSEOF
+
+# ──────────────────────────────────────
 # 8. GitHub CLI auth
 # ──────────────────────────────────────
 echo ""
@@ -207,6 +241,7 @@ echo "  [x] Obsidian skill     → ~/.claude/plugins/cache/obsidian-skills/"
 echo "  [x] Memory MCP         → ~/.claude/settings.json"
 echo "  [x] Memory files       → ~/.claude/projects/.../memory/"
 echo "  [x] OBSIDIAN_VAULT     → shell profile"
+echo "  [x] Auto-route hook    → ~/.claude/hooks/auto-route.js + settings.json"
 echo "  [x] GitHub CLI         → checked/configured"
 echo "  [x] Obsidian           → checked/launched"
 echo ""

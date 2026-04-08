@@ -13,6 +13,7 @@ const STEPS = [
   { key: 'memory-mcp',    label: 'AgentKits Memory',  mod: './steps/memory-mcp' },
   { key: 'env-var',       label: 'OBSIDIAN_VAULT',    mod: './steps/env-var' },
   { key: 'memory-files',  label: 'Memory files',      mod: './steps/memory-files' },
+  { key: 'hooks',         label: 'Auto-route hook',   mod: './steps/hooks' },
   { key: 'github-auth',   label: 'GitHub CLI',        mod: './steps/github-auth' },
   { key: 'obsidian-app',  label: 'Obsidian',          mod: './steps/obsidian-app' },
 ];
