@@ -3,31 +3,28 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
+// Claude Code encodes project paths by replacing every path separator with -
+// e.g. /Users/dan1d/claude-projects/x → -Users-dan1d-claude-projects-x
+//      /home/dan1d/claude-projects/x  → -home-dan1d-claude-projects-x
+function encodeProjectPath(absolutePath) {
+  return absolutePath.split(path.sep).join('-');
+}
+
 async function run(root) {
   try {
-    const username = os.userInfo().username;
     const home = os.homedir();
+
+    const theOwnerStackPath = path.join(home, 'claude-projects', 'theownerstack');
+    const paydaybooksPath   = path.join(home, 'claude-projects', 'theownerstack', 'shopify-project');
 
     const destinations = [
       {
         src: path.join(root, 'memory', 'theownerstack'),
-        dest: path.join(
-          home,
-          '.claude',
-          'projects',
-          `-Users-${username}-claude-projects-theownerstack`,
-          'memory'
-        ),
+        dest: path.join(home, '.claude', 'projects', encodeProjectPath(theOwnerStackPath), 'memory'),
       },
       {
         src: path.join(root, 'memory', 'paydaybooks'),
-        dest: path.join(
-          home,
-          '.claude',
-          'projects',
-          `-Users-${username}-claude-projects-theownerstack-shopify-project`,
-          'memory'
-        ),
+        dest: path.join(home, '.claude', 'projects', encodeProjectPath(paydaybooksPath), 'memory'),
       },
     ];
 

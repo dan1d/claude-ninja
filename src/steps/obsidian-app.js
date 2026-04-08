@@ -3,8 +3,27 @@ const { spawnSync } = require('child_process');
 const inquirer = require('inquirer');
 
 function isObsidianRunning() {
-  const result = spawnSync('pgrep', ['-i', 'Obsidian'], { stdio: 'pipe' });
+  // pgrep works on both macOS and Linux
+  const result = spawnSync('pgrep', ['-i', 'obsidian'], { stdio: 'pipe' });
   return result.status === 0;
+}
+
+function launchObsidian() {
+  if (process.platform === 'darwin') {
+    spawnSync('open', ['-a', 'Obsidian'], { stdio: 'pipe' });
+  } else if (process.platform === 'linux') {
+    // Try common Linux install locations in order
+    const candidates = ['obsidian', 'obsidian-bin'];
+    for (const cmd of candidates) {
+      const result = spawnSync('which', [cmd], { stdio: 'pipe' });
+      if (result.status === 0) {
+        spawnSync(cmd, [], { stdio: 'pipe', detached: true });
+        return;
+      }
+    }
+    // Fallback: xdg-open with the obsidian:// URI scheme
+    spawnSync('xdg-open', ['obsidian://'], { stdio: 'pipe' });
+  }
 }
 
 function sleep(ms) {
@@ -30,7 +49,7 @@ async function run(_root) {
       return { ok: true, message: 'skipped (not running)' };
     }
 
-    spawnSync('open', ['-a', 'Obsidian'], { stdio: 'pipe' });
+    launchObsidian();
     await sleep(3000);
 
     if (isObsidianRunning()) {

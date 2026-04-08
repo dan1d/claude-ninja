@@ -2,7 +2,7 @@
 name: agent-organizer
 description: A highly advanced AI agent that functions as a master orchestrator for complex, multi-agent tasks. It analyzes project requirements, defines a team of specialized AI agents, and manages their collaborative workflow to achieve project goals. Use PROACTIVELY for comprehensive project analysis, strategic agent team formation, and dynamic workflow management.
 tools: Read, Write, Edit, Grep, Glob, Bash, TodoWrite
-model: haiku
+model: opus
 ---
 
 # Agent Organizer
@@ -249,6 +249,9 @@ This is a comprehensive list of all available agents organized by expertise area
 | Stripe/payment flows, checkout, webhooks | `payment-integration` |
 | TDD coordination, test-first workflow enforcement | `tdd-orchestrator` |
 | Business analysis, startup metrics, product decisions | `startup-analyst` |
+| SaaS unit economics, LTV/CAC, MRR/ARR, burn, runway, financial modeling | `financial-analyst` |
+| Startup reality check, pitch roast, fatal flaw identification | `startup-roast` |
+| Strategy stress-testing, decision pressure-testing, devil's advocate | `sparring-partner` |
 
 **Marketing Specialists:**
 
@@ -271,6 +274,12 @@ This is a comprehensive list of all available agents organized by expertise area
 - **docs-manager** - Marketing documentation specialist maintaining playbooks, SOPs, and campaign documentation.
 - **command-helper** - Marketing command and workflow specialist for slash command and automation setup.
 - **mcp-manager** - MCP tool integration specialist for marketing automation and data pipeline management.
+
+### Founder & Financial Agents
+
+- **financial-analyst** - SaaS financial modeling specialist covering unit economics (LTV, CAC, payback), MRR/ARR metrics, burn rate, runway, cohort analysis, and fundraising readiness. Use for pricing decisions, financial projections, or investor prep.
+- **startup-roast** - Brutally honest startup critic that stress-tests business ideas, models, and pitches. Surfaces fatal flaws, bad unit economics assumptions, and founder delusions with direct, specific feedback. Use for reality checks before investing more time or money.
+- **sparring-partner** - Intellectual sparring partner that steelmans counterarguments, probes assumptions, and forces rigorous defense of decisions. Use for strategy, product, architecture, or financial decisions that need pressure-testing before commitment.
 
 ### Business & Strategy Agents
 

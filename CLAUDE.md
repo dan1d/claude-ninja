@@ -68,24 +68,34 @@ All steps are **non-destructive** — skip existing files, never overwrite.
 | `tdd-orchestrator` | TDD workflow coordination |
 | `startup-analyst` | Business analysis, SaaS metrics |
 
-## Auto-routing hook
+## Auto-routing hooks
 
-A `PostToolUse` hook (`~/.claude/hooks/auto-route.js`) fires after every file edit.
-It reads the changed file path, matches it against routing rules, and prints an
-`[CLAUDE-NINJA AUTO-ROUTE]` message that Claude reads and acts on — automatically
-invoking the right specialist agent without being asked.
+Two hooks are installed by `src/steps/hooks.js`:
+
+### 1. `auto-route.js` — PostToolUse (file edit routing)
+Fires after every file edit. Reads the changed file path, matches routing rules,
+prints `[CLAUDE-NINJA AUTO-ROUTE]` to steer Claude to the right specialist.
 
 Rules: JSX → react-pro, QBO services → qbo-specialist, jobs → sync-engineer,
 controllers → rails-react-pro, models/services → ruby-on-rails-pro.
 
-The hook is installed by `src/steps/hooks.js` — it copies `src/hooks/auto-route.js`
-to `~/.claude/hooks/` and merges the hook entry into `~/.claude/settings.json`
-under `PostToolUse`. The step is non-destructive: skipped if already present.
-
-To test:
 ```bash
 echo '{"tool_name":"Edit","tool_input":{"file_path":"app/javascript/pages/onboarding/StepSelectBank.jsx"}}' | node ~/.claude/hooks/auto-route.js
 ```
+
+### 2. `prompt-route.js` — UserPromptSubmit (prompt-based routing)
+Fires before Claude processes each user message. Scores the prompt against keyword
+rules and prints `[CLAUDE-NINJA PROMPT-ROUTE]` with a directive to invoke the
+correct specialist agent. Min score threshold prevents false positives on generic prompts.
+
+Covered domains: rails, react, rails+react (full-stack), tdd, security, database,
+debugger, stripe/payments, heroku, ci/cd, performance, marketing (TOFU/landing pages).
+
+```bash
+echo '{"prompt":"add a Stripe webhook for subscription billing"}' | node ~/.claude/hooks/prompt-route.js
+```
+
+Both hooks use absolute paths (not `~`) so they work on macOS and Linux.
 
 ## Quality gates (if editing the CLI)
 
