@@ -1,0 +1,20 @@
+{
+  "name": "@dan1d/claude-ninja",
+  "version": "1.0.0",
+  "description": "Personal Claude Code setup — dan1d",
+  "bin": {
+    "claude-ninja": "bin/cli.js"
+  },
+  "scripts": {
+    "install-config": "node bin/cli.js"
+  },
+  "dependencies": {
+    "chalk": "4.1.2",
+    "ora": "5.4.1",
+    "inquirer": "8.2.6",
+    "execa": "5.1.1"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}
