@@ -50,6 +50,28 @@ The script installs agents, the Obsidian skill plugin, and vault notes automatic
 
 ---
 
+## AgentKits Memory (MCP Server)
+
+Persistent SQLite memory with vector search and auto-capture hooks. Install once per machine:
+
+**Option A — npx (runs during install.sh):**
+```bash
+npx @aitytech/agentkits-memory --platform=claude-code
+```
+
+**Option B — Claude Code Marketplace:**
+```
+/plugin marketplace add aitytech/agentkits-memory
+/plugin install agentkits-memory@agentkits-memory
+```
+
+After install: memories are auto-captured each session. Browse them at `http://localhost:1905` via:
+```bash
+npx @aitytech/agentkits-memory web
+```
+
+---
+
 ## Manual steps after install
 
 ### 1. Enable the Obsidian skill

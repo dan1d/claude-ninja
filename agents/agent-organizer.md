@@ -246,6 +246,9 @@ This is a comprehensive list of all available agents organized by expertise area
 | Brand voice review, consistency check | `brand-voice-guardian` |
 | Conversion rate optimization | `conversion-optimizer` |
 | Campaign coordination, status tracking | `project-manager` |
+| Stripe/payment flows, checkout, webhooks | `payment-integration` |
+| TDD coordination, test-first workflow enforcement | `tdd-orchestrator` |
+| Business analysis, startup metrics, product decisions | `startup-analyst` |
 
 **Marketing Specialists:**
 

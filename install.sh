@@ -108,6 +108,20 @@ echo "        mkdir -p ~/.claude/projects/-Users-r1-claude-projects-theownerstac
 echo "        cp $SCRIPT_DIR/memory/paydaybooks/* ~/.claude/projects/-Users-r1-claude-projects-theownerstack-shopify-project/memory/"
 
 # ──────────────────────────────────────
+# 5. AgentKits Memory (MCP server)
+# ──────────────────────────────────────
+echo ""
+echo "[5] Installing AgentKits Memory MCP server..."
+echo "    Running: npx @aitytech/agentkits-memory --platform=claude-code"
+npx @aitytech/agentkits-memory --platform=claude-code || echo "    NOTE: Run manually if this fails: npx @aitytech/agentkits-memory"
+echo ""
+echo "    Alternatively, install via Claude Code plugin marketplace:"
+echo "      1. Open Claude Code"
+echo "      2. Run: /plugin marketplace add aitytech/agentkits-memory"
+echo "      3. Run: /plugin install agentkits-memory@agentkits-memory"
+echo "      4. Restart Claude Code"
+
+# ──────────────────────────────────────
 # Final checklist
 # ──────────────────────────────────────
 echo ""
