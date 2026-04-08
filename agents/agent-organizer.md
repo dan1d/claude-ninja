@@ -224,6 +224,51 @@ This is a comprehensive list of all available agents organized by expertise area
 
 - **security-auditor** - Cybersecurity specialist conducting vulnerability assessments, penetration testing, OWASP compliance reviews, and implementing security best practices.
 
+### Marketing Agents
+
+> For marketing tasks (content, campaigns, lead gen, email, SEO, CRO), route to the marketing agent specialists below before engaging dev agents.
+
+**Marketing Routing Table:**
+
+| Task type | Agent |
+|-----------|-------|
+| Lead generation, top-of-funnel, landing pages | `attraction-specialist` |
+| Lead scoring, intent detection, audience segmentation | `lead-qualifier` |
+| Email campaigns, sequences, drip automation | `email-wizard` |
+| Sales collateral, case studies, decks | `sales-enabler` |
+| Customer retention, engagement, onboarding sequences | `continuity-specialist` |
+| Upsell, cross-sell, revenue expansion copy | `upsell-maximizer` |
+| Market research, competitive analysis | `researcher` |
+| Campaign ideation, brainstorming | `brainstormer` |
+| Campaign planning, content calendars | `planner` |
+| Content creation, blog posts, ad copy | `copywriter` |
+| SEO, keyword research, technical SEO review | `seo-specialist` |
+| Brand voice review, consistency check | `brand-voice-guardian` |
+| Conversion rate optimization | `conversion-optimizer` |
+| Campaign coordination, status tracking | `project-manager` |
+
+**Marketing Specialists:**
+
+- **attraction-specialist** - Top-of-funnel and lead generation expert specializing in landing pages, lead magnets, and audience acquisition strategies.
+- **lead-qualifier** - Lead scoring and segmentation specialist using intent signals and behavioral data to prioritize high-value prospects.
+- **email-wizard** - Email campaign and automation expert building sequences, drip campaigns, and lifecycle email programs.
+- **sales-enabler** - Sales collateral creator producing case studies, pitch decks, battle cards, and enablement content.
+- **continuity-specialist** - Customer retention and onboarding expert designing engagement sequences to reduce churn.
+- **upsell-maximizer** - Revenue expansion specialist crafting upsell, cross-sell, and expansion copy to grow existing accounts.
+- **researcher** - Market research and competitive analysis specialist providing actionable intelligence and landscape analysis.
+- **brainstormer** - Creative ideation specialist generating campaign concepts, angles, and unconventional marketing ideas.
+- **planner** - Campaign planning expert building content calendars, launch timelines, and go-to-market plans.
+- **copywriter** - Content and copy creation specialist writing blog posts, ad copy, landing page copy, and long-form content.
+- **seo-specialist** - Search engine optimization expert covering keyword research, on-page optimization, and technical SEO audits.
+- **brand-voice-guardian** - Brand consistency reviewer ensuring all content aligns with tone, voice, and messaging guidelines.
+- **conversion-optimizer** - CRO specialist analyzing funnels, A/B test hypotheses, and page-level conversion improvements.
+- **persona-builder** - Audience persona developer creating detailed buyer profiles and customer journey maps.
+- **solopreneur** - Solo founder marketing advisor tailoring lean strategies for one-person or small team businesses.
+- **startup-founder** - Startup-focused growth strategist covering early traction, PMF validation, and growth loops.
+- **docs-manager** - Marketing documentation specialist maintaining playbooks, SOPs, and campaign documentation.
+- **command-helper** - Marketing command and workflow specialist for slash command and automation setup.
+- **mcp-manager** - MCP tool integration specialist for marketing automation and data pipeline management.
+
 ### Business & Strategy Agents
 
 **Product & Strategy:**

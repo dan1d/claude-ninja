@@ -132,6 +132,30 @@ claude-ninja/
 
 ---
 
+## Marketing Agents (AgentKits Marketing)
+
+20 enterprise-grade marketing agents from [AgentKits Marketing](https://github.com/aitytech/agentkits-marketing):
+
+| Category | Agents |
+|----------|--------|
+| Core | attraction-specialist, lead-qualifier, email-wizard, sales-enabler, continuity-specialist, upsell-maximizer |
+| Support | researcher, brainstormer, planner, project-manager, copywriter, docs-manager |
+| Review | brand-voice-guardian, conversion-optimizer, seo-specialist |
+| Strategy | persona-builder, solopreneur, startup-founder, command-helper, mcp-manager |
+
+### How routing works
+
+1. Type `/next` — Claude reads your Obsidian Dev Tracker
+2. If task is dev-related → routes to `ruby-on-rails-pro`, `hotwire-pro`, etc.
+3. If task is marketing-related → routes to the appropriate marketing agent above
+4. For unclear/multi-domain → `agent-organizer` decides
+
+### Marketing commands
+
+Run `/marketing <task description>` to directly invoke the marketing agent dispatcher.
+
+---
+
 ## Updating this backup
 
 After adding new agents, updating memory files, or adding vault notes, commit and push:

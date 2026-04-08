@@ -20,6 +20,23 @@ cp "$SCRIPT_DIR/agents/"*.md "$CLAUDE_DIR/agents/"
 echo "      Copied $(ls "$SCRIPT_DIR/agents/" | wc -l | tr -d ' ') agent files to $CLAUDE_DIR/agents/"
 
 # ──────────────────────────────────────
+# 1b. Marketing agents (AgentKits Marketing)
+# ──────────────────────────────────────
+echo ""
+echo "[1b] Installing marketing agents..."
+cp -r "$SCRIPT_DIR/agents/marketing/"*.md "$CLAUDE_DIR/agents/"
+echo "✓ Marketing agents installed (20 agents from AgentKits Marketing)"
+
+# ──────────────────────────────────────
+# 1c. Marketing commands
+# ──────────────────────────────────────
+echo ""
+echo "[1c] Installing marketing commands..."
+mkdir -p "$CLAUDE_DIR/commands/marketing"
+cp -r "$SCRIPT_DIR/commands/marketing/" "$CLAUDE_DIR/commands/"
+echo "      Copied marketing commands to $CLAUDE_DIR/commands/marketing/"
+
+# ──────────────────────────────────────
 # 2. Obsidian skill plugin
 # ──────────────────────────────────────
 echo ""
