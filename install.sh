@@ -37,6 +37,19 @@ cp -r "$SCRIPT_DIR/commands/marketing/" "$CLAUDE_DIR/commands/"
 echo "      Copied marketing commands to $CLAUDE_DIR/commands/marketing/"
 
 # ──────────────────────────────────────
+# 1d. Global commands
+# ──────────────────────────────────────
+echo ""
+echo "[1d] Installing global commands..."
+mkdir -p "$CLAUDE_DIR/commands"
+cp "$SCRIPT_DIR/commands/next.md" "$CLAUDE_DIR/commands/"
+cp "$SCRIPT_DIR/commands/test.md" "$CLAUDE_DIR/commands/"
+cp "$SCRIPT_DIR/commands/lint.md" "$CLAUDE_DIR/commands/"
+cp "$SCRIPT_DIR/commands/plan.md" "$CLAUDE_DIR/commands/"
+cp "$SCRIPT_DIR/commands/marketing.md" "$CLAUDE_DIR/commands/"
+echo "      Global commands installed: next, test, lint, plan, marketing"
+
+# ──────────────────────────────────────
 # 2. Obsidian skill plugin
 # ──────────────────────────────────────
 echo ""
@@ -103,6 +116,7 @@ echo "  Post-install checklist"
 echo "=================================="
 echo ""
 echo "  [x] Agents installed to ~/.claude/agents/"
+echo "  [x] Global commands installed to ~/.claude/commands/ (next, test, lint, plan, marketing)"
 echo "  [x] Obsidian skill plugin installed to ~/.claude/plugins/cache/obsidian-skills/"
 echo ""
 echo "  Manual steps remaining:"

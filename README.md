@@ -30,9 +30,23 @@ The script installs agents, the Obsidian skill plugin, and vault notes automatic
 | Component | Source | Destination |
 |-----------|--------|-------------|
 | Agents (41 files) | `agents/` | `~/.claude/agents/` |
+| Global commands | `commands/*.md` | `~/.claude/commands/` |
 | Obsidian skill plugin | `plugins/obsidian-skills/` | `~/.claude/plugins/cache/obsidian-skills/` |
 | Obsidian vault notes | `obsidian/TheOwnerStack/` | `~/Documents/obsidian/TheOwnerStack/` |
 | Memory files | `memory/` | Manual — see below |
+
+---
+
+## Adding to a project
+
+1. Run `install.sh` once on any new machine (installs agents + commands globally).
+2. In each project repo, create one file:
+   ```bash
+   echo "YourProjectName" > .claude/obsidian-project
+   ```
+   That's it. `/next`, `/test`, `/lint`, `/plan`, `/marketing` are all available globally.
+
+3. Optionally commit `.claude/` to git so your stack-specific agent overrides travel with the repo.
 
 ---
 
@@ -78,14 +92,16 @@ Ensure the vault is open in Obsidian at `~/Documents/obsidian/TheOwnerStack/`. T
 
 ### Session start (4-read pattern)
 
-At the start of every LeadFound session, Claude reads four Obsidian notes to restore context:
+Run `/next` in any project repo. It auto-detects the project by reading `.claude/obsidian-project`, then loads four Obsidian notes to restore context:
 
 ```bash
-obsidian vault="TheOwnerStack" read path="LeadFound/Meta/User Profile.md"
-obsidian vault="TheOwnerStack" read path="LeadFound/Meta/Preferences & Feedback.md"
-obsidian vault="TheOwnerStack" read path="LeadFound/Meta/Known Issues.md"
-obsidian vault="TheOwnerStack" read path="LeadFound/Dev/Dev Tracker.md"
+obsidian vault="TheOwnerStack" read path="<PROJECT_NAME>/Meta/User Profile.md"
+obsidian vault="TheOwnerStack" read path="<PROJECT_NAME>/Meta/Preferences & Feedback.md"
+obsidian vault="TheOwnerStack" read path="<PROJECT_NAME>/Meta/Known Issues.md"
+obsidian vault="TheOwnerStack" read path="<PROJECT_NAME>/Dev/Dev Tracker.md"
 ```
+
+No hardcoded project names — `PROJECT_NAME` is read from `.claude/obsidian-project` in the repo root.
 
 ### New project auto-trigger
 
@@ -116,6 +132,8 @@ The `/next` command resumes the most recent task from the Dev Tracker, reading c
 ```
 claude-ninja/
 ├── agents/                    # 41 Claude Code agent definitions (.md)
+├── commands/                  # Global commands (next, test, lint, plan, marketing)
+│   └── marketing/             # Marketing sub-commands
 ├── memory/
 │   ├── theownerstack/         # 23 memory files for the TheOwnerStack workspace
 │   └── paydaybooks/           # 4 memory files for the PaydayBooks workspace

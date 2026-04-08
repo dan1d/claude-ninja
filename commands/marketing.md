@@ -4,8 +4,14 @@ Read the current Obsidian task context and route to the appropriate marketing ag
 
 ## Instructions
 
-1. Identify the marketing task type from $ARGUMENTS or current Obsidian Dev Tracker
-2. Route to the correct agent using this table:
+1. Detect the current project's Obsidian folder:
+   - Run: `cat .claude/obsidian-project`
+   - Store the result as PROJECT_NAME (e.g. "LeadFound")
+   - If the file doesn't exist, ask the user: "What's the Obsidian project folder name for this repo?"
+   - Use PROJECT_NAME to load context: product name, target audience, and current Dev Tracker state
+
+2. Identify the marketing task type from $ARGUMENTS or current Obsidian Dev Tracker
+3. Route to the correct agent using this table:
 
 | Task | Agent |
 |------|-------|
@@ -23,5 +29,5 @@ Read the current Obsidian task context and route to the appropriate marketing ag
 | Brand review | `brand-voice-guardian` |
 | CRO | `conversion-optimizer` |
 
-3. Spawn the agent with full context: project name, target audience, current task description
-4. After completion, update Obsidian Dev Tracker
+4. Spawn the agent with full context: project name, target audience, current task description
+5. After completion, update Obsidian Dev Tracker
