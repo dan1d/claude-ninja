@@ -1,8 +1,49 @@
 'use strict';
 
-// UserPromptSubmit hook — route prompts to specialist agents before Claude responds
+// UserPromptSubmit hook — two jobs:
+//  1. If no Obsidian plan exists for this session, remind Claude to write one FIRST
+//     (proactive — prevents the PreToolUse gate from ever firing as a surprise)
+//  2. Route prompts to specialist agents based on keyword scoring
 // Reads JSON payload from stdin, prints a routing directive if the prompt matches a rule.
 // No npm dependencies — only Node.js built-ins.
+
+const os     = require('os');
+const fs     = require('fs');
+const path   = require('path');
+const crypto = require('crypto');
+
+// ── Plan sentinel helpers (mirrors obsidian-task-gate.js) ────────────────────
+
+const SENTINEL_TTL = 4 * 60 * 60 * 1000;
+
+function projHash() {
+  return crypto.createHash('sha1').update(process.cwd()).digest('hex').slice(0, 8);
+}
+
+function planSentinelPath(sessionId) {
+  const sid = (sessionId || 'no-session').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 24);
+  return path.join(os.tmpdir(), `claude-ninja-plan-ready-${projHash()}-${sid}`);
+}
+
+function planExists(sessionId) {
+  try {
+    const stat = fs.statSync(planSentinelPath(sessionId));
+    return (Date.now() - stat.mtimeMs) < SENTINEL_TTL;
+  } catch { return false; }
+}
+
+function getVaultPath() {
+  if (process.env.OBSIDIAN_VAULT) return process.env.OBSIDIAN_VAULT;
+  return path.join(os.homedir(), 'Documents', 'obsidian');
+}
+
+function getProjectName() {
+  try {
+    return fs.readFileSync(path.join(process.cwd(), '.claude', 'obsidian-project'), 'utf8').trim();
+  } catch { return path.basename(process.cwd()); }
+}
+
+// ── Routing rules ────────────────────────────────────────────────────────────
 
 // Each rule has a `score` function that returns a numeric weight for the prompt.
 // The rule with the highest non-zero score wins.
@@ -306,17 +347,45 @@ function main() {
         process.exit(0);
       }
 
-      const prompt = extractPrompt(payload);
+      const sessionId = payload.session_id || '';
+      const prompt    = extractPrompt(payload);
       if (!prompt || prompt.trim().length < 10) process.exit(0);
 
+      // ── Proactive Obsidian plan reminder ─────────────────────────────────
+      // If no plan sentinel exists for this session AND the vault is present,
+      // tell Claude to write to the Dev Tracker BEFORE doing any code edits.
+      // This prevents the PreToolUse gate from ever firing as a surprise block.
+      const vault = getVaultPath();
+      let planReminder = '';
+      if (!planExists(sessionId) && fs.existsSync(vault)) {
+        const project = getProjectName();
+        const tracker = path.join(vault, project, 'Dev', 'Dev Tracker.md');
+        const now     = new Date().toISOString().slice(0, 16).replace('T', ' ');
+        planReminder =
+          `[CLAUDE-NINJA SESSION START]\n` +
+          `No Obsidian task plan found for this session.\n` +
+          `Before making any code changes, use Write or Edit to add a task entry to:\n` +
+          `  ${tracker}\n` +
+          `Format:\n` +
+          `  - [ ] [brief task name] — ${now}\n` +
+          `    - Plan: [what and why]\n` +
+          `    - Files: [which files will change]\n` +
+          `Do this first, then proceed with the user's request.\n\n`;
+      }
+
+      // ── Agent routing ─────────────────────────────────────────────────────
       const match = bestMatch(prompt);
-      if (!match) process.exit(0);
+
+      if (!match && !planReminder) process.exit(0);
 
       process.stdout.write(
-        `[CLAUDE-NINJA PROMPT-ROUTE]\n` +
-        `Detected task: ${match.rule.description}\n` +
-        `Required agent: ${match.rule.agent}\n` +
-        `Action: You MUST use the Agent tool to invoke the "${match.rule.agent}" subagent for this task. Do not handle it as the general-purpose assistant. Pass the full user request and relevant context to the agent.\n`
+        planReminder +
+        (match
+          ? `[CLAUDE-NINJA PROMPT-ROUTE]\n` +
+            `Detected task: ${match.rule.description}\n` +
+            `Required agent: ${match.rule.agent}\n` +
+            `Action: You MUST use the Agent tool to invoke the "${match.rule.agent}" subagent for this task. Do not handle it as the general-purpose assistant. Pass the full user request and relevant context to the agent.\n`
+          : '')
       );
     } catch (_err) {
       process.exit(0);
