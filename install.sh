@@ -112,14 +112,50 @@ echo "        cp $SCRIPT_DIR/memory/paydaybooks/* ~/.claude/projects/-Users-r1-c
 # ──────────────────────────────────────
 echo ""
 echo "[5] Installing AgentKits Memory MCP server..."
-echo "    Running: npx @aitytech/agentkits-memory --platform=claude-code"
-npx @aitytech/agentkits-memory --platform=claude-code || echo "    NOTE: Run manually if this fails: npx @aitytech/agentkits-memory"
+
+# Run npx from HOME so MCP config lands in ~/.claude/settings.json (not cwd)
+cd "$HOME" && npx @aitytech/agentkits-memory --platform=claude-code || echo "    NOTE: Run manually: npx @aitytech/agentkits-memory"
+cd "$SCRIPT_DIR"
+echo "      Memory DB: ~/.claude/memory/memory.db"
+echo "      Browse: npx @aitytech/agentkits-memory web  →  http://localhost:1905"
+
+# ──────────────────────────────────────
+# 6. OBSIDIAN_VAULT env var
+# ──────────────────────────────────────
 echo ""
-echo "    Alternatively, install via Claude Code plugin marketplace:"
-echo "      1. Open Claude Code"
-echo "      2. Run: /plugin marketplace add aitytech/agentkits-memory"
-echo "      3. Run: /plugin install agentkits-memory@agentkits-memory"
-echo "      4. Restart Claude Code"
+echo "[6] Setting OBSIDIAN_VAULT in shell profile..."
+SHELL_RC="$HOME/.zshrc"
+[ -f "$HOME/.bashrc" ] && SHELL_RC="$HOME/.bashrc"
+VAULT_LINE="export OBSIDIAN_VAULT=\"$HOME/Documents/obsidian/TheOwnerStack\""
+if ! grep -q "OBSIDIAN_VAULT" "$SHELL_RC" 2>/dev/null; then
+  echo "" >> "$SHELL_RC"
+  echo "# claude-ninja" >> "$SHELL_RC"
+  echo "$VAULT_LINE" >> "$SHELL_RC"
+  echo "      Added to $SHELL_RC — run: source $SHELL_RC"
+else
+  echo "      Already set in $SHELL_RC — skipping"
+fi
+
+# ──────────────────────────────────────
+# 7. Memory files (auto-detect username)
+# ──────────────────────────────────────
+echo ""
+echo "[7] Installing memory files..."
+USERNAME=$(whoami)
+TOS_MEM="$HOME/.claude/projects/-Users-${USERNAME}-claude-projects-theownerstack/memory"
+PB_MEM="$HOME/.claude/projects/-Users-${USERNAME}-claude-projects-theownerstack-shopify-project/memory"
+
+mkdir -p "$TOS_MEM"
+cp "$SCRIPT_DIR/memory/theownerstack/"* "$TOS_MEM/"
+echo "      Installed theownerstack memory → $TOS_MEM"
+
+mkdir -p "$PB_MEM"
+cp "$SCRIPT_DIR/memory/paydaybooks/"* "$PB_MEM/"
+echo "      Installed paydaybooks memory   → $PB_MEM"
+
+echo ""
+echo "      NOTE: These paths assume your projects live at ~/claude-projects/theownerstack/"
+echo "      If they're elsewhere, copy manually from $SCRIPT_DIR/memory/"
 
 # ──────────────────────────────────────
 # Final checklist
@@ -129,25 +165,21 @@ echo "=================================="
 echo "  Post-install checklist"
 echo "=================================="
 echo ""
-echo "  [x] Agents installed to ~/.claude/agents/"
-echo "  [x] Global commands installed to ~/.claude/commands/ (next, test, lint, plan, marketing)"
-echo "  [x] Obsidian skill plugin installed to ~/.claude/plugins/cache/obsidian-skills/"
+echo "  [x] Agents installed         → ~/.claude/agents/ (65 agents)"
+echo "  [x] Commands installed       → ~/.claude/commands/ (next, test, lint, plan, marketing)"
+echo "  [x] Obsidian skill           → ~/.claude/plugins/cache/obsidian-skills/"
+echo "  [x] AgentKits Memory MCP     → ~/.claude/settings.json (mcpServers + hooks)"
+echo "  [x] Memory files             → ~/.claude/projects/.../memory/"
+echo "  [x] OBSIDIAN_VAULT           → added to shell profile"
 echo ""
-echo "  Manual steps remaining:"
+echo "  One manual step:"
 echo ""
-echo "  [ ] Enable the obsidian-skills plugin:"
-echo "        Open Claude Code → run /plugins → enable 'obsidian-skills'"
+echo "  [ ] gh auth login"
+echo "        Required for GitHub CLI tools and agent-organizer repo access."
+echo "        Run: gh auth login"
 echo ""
-echo "  [ ] Verify Obsidian vault is open in Obsidian at:"
-echo "        $OBSIDIAN_VAULT"
-echo ""
-echo "  [ ] Install memory files to the correct project paths (see step 4 above)"
-echo ""
-echo "  [ ] Authenticate gh CLI (GitHub):"
-echo "        gh auth login"
-echo ""
-echo "  [ ] Set the OBSIDIAN_VAULT env var if needed (some skill configs read it):"
-echo "        export OBSIDIAN_VAULT=\"$OBSIDIAN_VAULT\""
+echo "  [ ] Open Obsidian with the TheOwnerStack vault before starting any session."
+echo "        The obsidian CLI requires Obsidian to be running."
 echo ""
 echo "Done. Welcome back."
 echo ""
