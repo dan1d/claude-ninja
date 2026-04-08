@@ -31,7 +31,10 @@ async function run(root) {
       },
     ];
 
-    let count = 0;
+    let copied = 0;
+    let skipped = 0;
+    let memoryPreserved = false;
+
     for (const { src, dest } of destinations) {
       if (!fs.existsSync(src)) continue;
       fs.mkdirSync(dest, { recursive: true });
@@ -40,13 +43,34 @@ async function run(root) {
         const srcFile = path.join(src, file);
         const stat = fs.statSync(srcFile);
         if (stat.isFile()) {
-          fs.copyFileSync(srcFile, path.join(dest, file));
-          count++;
+          const destFile = path.join(dest, file);
+          if (fs.existsSync(destFile)) {
+            if (file === 'MEMORY.md') {
+              memoryPreserved = true;
+            }
+            skipped++;
+          } else {
+            fs.copyFileSync(srcFile, destFile);
+            copied++;
+          }
         }
       }
     }
 
-    return { ok: true, message: `${count} memory files → ~/.claude/projects/.../memory/` };
+    let msg;
+    if (copied > 0) {
+      msg = `${copied} added → ~/.claude/projects/.../memory/`;
+      if (skipped > 0) {
+        msg += ` (${skipped} already present, skipped`;
+        if (memoryPreserved) msg += ' — MEMORY.md preserved';
+        msg += ')';
+      }
+    } else {
+      msg = `all ${skipped} already installed — nothing to do`;
+      if (memoryPreserved) msg += ' (MEMORY.md preserved)';
+    }
+
+    return { ok: true, message: msg };
   } catch (err) {
     return { ok: false, message: 'memory-files install failed', error: err.message };
   }

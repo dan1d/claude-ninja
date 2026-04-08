@@ -3,18 +3,28 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-function copyDirRecursive(src, dest) {
+function copyDirRecursiveNonDestructive(src, dest) {
   fs.mkdirSync(dest, { recursive: true });
   const entries = fs.readdirSync(src, { withFileTypes: true });
+  let copied = 0;
+  let skipped = 0;
   for (const entry of entries) {
     const srcPath = path.join(src, entry.name);
     const destPath = path.join(dest, entry.name);
     if (entry.isDirectory()) {
-      copyDirRecursive(srcPath, destPath);
+      const result = copyDirRecursiveNonDestructive(srcPath, destPath);
+      copied += result.copied;
+      skipped += result.skipped;
     } else {
-      fs.copyFileSync(srcPath, destPath);
+      if (fs.existsSync(destPath)) {
+        skipped++;
+      } else {
+        fs.copyFileSync(srcPath, destPath);
+        copied++;
+      }
     }
   }
+  return { copied, skipped };
 }
 
 async function run(root) {
@@ -23,26 +33,35 @@ async function run(root) {
     fs.mkdirSync(dest, { recursive: true });
 
     const topLevelFiles = ['next.md', 'test.md', 'lint.md', 'plan.md', 'marketing.md'];
-    let count = 0;
+    let copied = 0;
+    let skipped = 0;
 
     for (const file of topLevelFiles) {
       const srcFile = path.join(root, 'commands', file);
       if (fs.existsSync(srcFile)) {
-        fs.copyFileSync(srcFile, path.join(dest, file));
-        count++;
+        const destFile = path.join(dest, file);
+        if (fs.existsSync(destFile)) {
+          skipped++;
+        } else {
+          fs.copyFileSync(srcFile, destFile);
+          copied++;
+        }
       }
     }
 
-    // Copy marketing subdirectory recursively
+    // Copy marketing subdirectory recursively (non-destructive)
     const marketingSrc = path.join(root, 'commands', 'marketing');
     if (fs.existsSync(marketingSrc)) {
-      copyDirRecursive(marketingSrc, path.join(dest, 'marketing'));
-      const marketingFiles = fs.readdirSync(marketingSrc, { recursive: true })
-        .filter(f => typeof f === 'string');
-      count += marketingFiles.length;
+      const result = copyDirRecursiveNonDestructive(marketingSrc, path.join(dest, 'marketing'));
+      copied += result.copied;
+      skipped += result.skipped;
     }
 
-    return { ok: true, message: `${count} commands → ~/.claude/commands/` };
+    const msg = copied > 0
+      ? `${copied} added → ~/.claude/commands/${skipped > 0 ? ` (${skipped} already present, skipped)` : ''}`
+      : `all ${skipped} already installed — nothing to do`;
+
+    return { ok: true, message: msg };
   } catch (err) {
     return { ok: false, message: 'commands install failed', error: err.message };
   }

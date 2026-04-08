@@ -13,17 +13,28 @@ async function run(root) {
       path.join(root, 'agents', 'marketing'),
     ];
 
-    let count = 0;
+    let copied = 0;
+    let skipped = 0;
+
     for (const src of sources) {
       if (!fs.existsSync(src)) continue;
       const files = fs.readdirSync(src).filter(f => f.endsWith('.md'));
       for (const file of files) {
-        fs.copyFileSync(path.join(src, file), path.join(dest, file));
-        count++;
+        const destFile = path.join(dest, file);
+        if (fs.existsSync(destFile)) {
+          skipped++;
+        } else {
+          fs.copyFileSync(path.join(src, file), destFile);
+          copied++;
+        }
       }
     }
 
-    return { ok: true, message: `${count} agents → ~/.claude/agents/` };
+    const msg = copied > 0
+      ? `${copied} added → ~/.claude/agents/${skipped > 0 ? ` (${skipped} already present, skipped)` : ''}`
+      : `all ${skipped} already installed — nothing to do`;
+
+    return { ok: true, message: msg };
   } catch (err) {
     return { ok: false, message: 'agents install failed', error: err.message };
   }

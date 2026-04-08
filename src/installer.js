@@ -24,14 +24,31 @@ function formatResult(ok, label, message) {
   return `  ${icon}  ${paddedLabel} ${msg}`;
 }
 
+const header = () => {
+  const c = chalk.gray;
+  const w = chalk.white.bold;
+
+  console.log('');
+  console.log(c('  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░'));
+  console.log(c('  ░') + '                                        ' + c('░'));
+  console.log(c('  ░') + '        ' + c('    ██████              ') + '    ' + c('░'));
+  console.log(c('  ░') + '        ' + c('   ████████             ') + '    ' + c('░'));
+  console.log(c('  ░') + '        ' + c('   ██') + chalk.red('◉◉') + c('████            ') + '    ' + c('░'));
+  console.log(c('  ░') + '        ' + c('   ████████             ') + '    ' + c('░'));
+  console.log(c('  ░') + '        ' + c(' ▄████████████▄         ') + '    ' + c('░'));
+  console.log(c('  ░') + '        ' + c('  ████ ████ ████        ') + '    ' + c('░'));
+  console.log(c('  ░') + '        ' + c('  ████ ████ ████        ') + '    ' + c('░'));
+  console.log(c('  ░') + '        ' + c('  ██▀   ██   ▀██        ') + '    ' + c('░'));
+  console.log(c('  ░') + '                                        ' + c('░'));
+  console.log(c('  ░') + '   ' + w('🥷  claude-ninja') + '                      ' + c('░'));
+  console.log(c('  ░') + '   ' + chalk.gray('Personal Claude Code Setup · dan1d') + '   ' + c('░'));
+  console.log(c('  ░') + '                                        ' + c('░'));
+  console.log(c('  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░'));
+  console.log('');
+};
+
 async function main() {
-  // ── Header ──────────────────────────────────────────────────────────────
-  console.log('');
-  console.log(chalk.cyan('╔══════════════════════════════════════════════╗'));
-  console.log(chalk.cyan('║') + chalk.bold('  🥷  claude-ninja                            ') + chalk.cyan('║'));
-  console.log(chalk.cyan('║') + '      Personal Claude Code Setup — dan1d      ' + chalk.cyan('║'));
-  console.log(chalk.cyan('╚══════════════════════════════════════════════╝'));
-  console.log('');
+  header();
   console.log('  Installing your AI development environment...');
   console.log('');
 

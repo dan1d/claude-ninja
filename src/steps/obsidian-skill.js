@@ -3,18 +3,28 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-function copyDirRecursive(src, dest) {
+function copyDirRecursiveNonDestructive(src, dest) {
   fs.mkdirSync(dest, { recursive: true });
   const entries = fs.readdirSync(src, { withFileTypes: true });
+  let copied = 0;
+  let skipped = 0;
   for (const entry of entries) {
     const srcPath = path.join(src, entry.name);
     const destPath = path.join(dest, entry.name);
     if (entry.isDirectory()) {
-      copyDirRecursive(srcPath, destPath);
+      const result = copyDirRecursiveNonDestructive(srcPath, destPath);
+      copied += result.copied;
+      skipped += result.skipped;
     } else {
-      fs.copyFileSync(srcPath, destPath);
+      if (fs.existsSync(destPath)) {
+        skipped++;
+      } else {
+        fs.copyFileSync(srcPath, destPath);
+        copied++;
+      }
     }
   }
+  return { copied, skipped };
 }
 
 async function run(root) {
@@ -26,8 +36,13 @@ async function run(root) {
       return { ok: false, message: 'obsidian-skill install failed', error: `Source not found: ${src}` };
     }
 
-    copyDirRecursive(src, dest);
-    return { ok: true, message: 'Obsidian skill → ~/.claude/plugins/cache/' };
+    const { copied, skipped } = copyDirRecursiveNonDestructive(src, dest);
+
+    const msg = copied > 0
+      ? `Obsidian skill → ~/.claude/plugins/cache/${skipped > 0 ? ` (${skipped} already present, skipped)` : ''}`
+      : `already installed — nothing to do (${skipped} files)`;
+
+    return { ok: true, message: msg };
   } catch (err) {
     return { ok: false, message: 'obsidian-skill install failed', error: err.message };
   }
