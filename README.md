@@ -1,0 +1,150 @@
+# claude-ninja
+
+Private backup of Daniel's full Claude Code configuration. Restores agents, the Obsidian skill plugin, vault notes, and memory files on a new machine.
+
+---
+
+## Prerequisites
+
+- **Claude Code CLI** installed (`npm install -g @anthropic-ai/claude-code` or via the desktop app)
+- **Obsidian** installed with the TheOwnerStack vault at `~/Documents/obsidian/TheOwnerStack/`
+- **gh CLI** installed and authenticated (`gh auth login`)
+- macOS (paths are macOS-specific)
+
+---
+
+## Installation
+
+```bash
+git clone git@github.com:dan1d/claude-ninja.git
+cd claude-ninja
+./install.sh
+```
+
+The script installs agents, the Obsidian skill plugin, and vault notes automatically. Memory files require a manual step — see below.
+
+---
+
+## What gets installed
+
+| Component | Source | Destination |
+|-----------|--------|-------------|
+| Agents (41 files) | `agents/` | `~/.claude/agents/` |
+| Obsidian skill plugin | `plugins/obsidian-skills/` | `~/.claude/plugins/cache/obsidian-skills/` |
+| Obsidian vault notes | `obsidian/TheOwnerStack/` | `~/Documents/obsidian/TheOwnerStack/` |
+| Memory files | `memory/` | Manual — see below |
+
+---
+
+## Manual steps after install
+
+### 1. Enable the Obsidian skill
+
+Open Claude Code and run:
+```
+/plugins
+```
+Enable `obsidian-skills` from the list. This activates the `obsidian` tool that reads vault notes during session starts.
+
+### 2. Install memory files
+
+Claude Code stores project memory at paths derived from the absolute workspace path, with `/` replaced by `-`:
+
+```
+~/.claude/projects/<encoded-workspace-path>/memory/
+```
+
+**TheOwnerStack workspace** (adjust username `r1` if different):
+```bash
+mkdir -p ~/.claude/projects/-Users-r1-claude-projects-theownerstack/memory/
+cp memory/theownerstack/* ~/.claude/projects/-Users-r1-claude-projects-theownerstack/memory/
+```
+
+**PaydayBooks workspace** (Shopify project):
+```bash
+mkdir -p ~/.claude/projects/-Users-r1-claude-projects-theownerstack-shopify-project/memory/
+cp memory/paydaybooks/* ~/.claude/projects/-Users-r1-claude-projects-theownerstack-shopify-project/memory/
+```
+
+Memory files include `MEMORY.md` (the session index Claude reads at startup) plus all project-specific sub-files.
+
+### 3. Verify Obsidian vault
+
+Ensure the vault is open in Obsidian at `~/Documents/obsidian/TheOwnerStack/`. The vault must be registered in Obsidian for the CLI skill to access it.
+
+---
+
+## How the system works
+
+### Session start (4-read pattern)
+
+At the start of every LeadFound session, Claude reads four Obsidian notes to restore context:
+
+```bash
+obsidian vault="TheOwnerStack" read path="LeadFound/Meta/User Profile.md"
+obsidian vault="TheOwnerStack" read path="LeadFound/Meta/Preferences & Feedback.md"
+obsidian vault="TheOwnerStack" read path="LeadFound/Meta/Known Issues.md"
+obsidian vault="TheOwnerStack" read path="LeadFound/Dev/Dev Tracker.md"
+```
+
+### New project auto-trigger
+
+When Daniel says anything like "I want to build X" or "new project for Y", Claude automatically:
+1. Reads `Project Guidelines.md` from the Obsidian vault
+2. Asks for name/stack/description if not clear
+3. Generates the full project scaffold (CLAUDE.md, `.claude/` dir, agents, commands, MEMORY.md entry)
+
+### `/next` command
+
+The `/next` command resumes the most recent task from the Dev Tracker, reading current state from the Obsidian vault.
+
+---
+
+## Stack reference
+
+| Project | Stack | Path |
+|---------|-------|------|
+| **LeadFound** | Rails 8.1.3, Ruby 4.0.2, SolidQueue, Reddit + X scanning | `~/claude-projects/theownerstack/lead_found/` |
+| **SalesToBooks** (main app) | Rails 8.1, Hotwire, Tailwind, Sidekiq, Neon PostgreSQL | `~/claude-projects/theownerstack/app-theownerstack/` |
+| **PaydayBooks** | Rails 8.1.2, React 19, Shopify + QuickBooks Online | `~/claude-projects/theownerstack/shopify-project/` |
+| **SandboxHub** | Rails 8.1, Hotwire, Flowbite, SolidQueue | `~/claude-projects/theownerstack/sandbox_hub/` |
+
+---
+
+## Repository layout
+
+```
+claude-ninja/
+├── agents/                    # 41 Claude Code agent definitions (.md)
+├── memory/
+│   ├── theownerstack/         # 23 memory files for the TheOwnerStack workspace
+│   └── paydaybooks/           # 4 memory files for the PaydayBooks workspace
+├── obsidian/
+│   └── TheOwnerStack/
+│       ├── Project Guidelines.md
+│       ├── LeadFound/         # All LeadFound vault notes
+│       └── PaydayBooks/       # All PaydayBooks vault notes
+├── plugins/
+│   └── obsidian-skills/       # Obsidian CLI skill plugin (v1.0.1)
+├── install.sh                 # Restore script
+└── README.md                  # This file
+```
+
+---
+
+## Updating this backup
+
+After adding new agents, updating memory files, or adding vault notes, commit and push:
+
+```bash
+cd /path/to/claude-ninja
+cp ~/.claude/agents/*.md agents/
+cp ~/.claude/projects/-Users-r1-claude-projects-theownerstack/memory/* memory/theownerstack/
+cp ~/.claude/projects/-Users-r1-claude-projects-theownerstack-shopify-project/memory/* memory/paydaybooks/
+cp "/path/to/obsidian/TheOwnerStack/Project Guidelines.md" obsidian/TheOwnerStack/
+cp -r "/path/to/obsidian/TheOwnerStack/LeadFound" obsidian/TheOwnerStack/
+cp -r "/path/to/obsidian/TheOwnerStack/PaydayBooks" obsidian/TheOwnerStack/
+git add -A
+git commit -m "Update claude-ninja backup $(date +%Y-%m-%d)"
+git push
+```
