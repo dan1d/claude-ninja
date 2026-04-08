@@ -158,28 +158,61 @@ echo "      NOTE: These paths assume your projects live at ~/claude-projects/the
 echo "      If they're elsewhere, copy manually from $SCRIPT_DIR/memory/"
 
 # ──────────────────────────────────────
+# 8. GitHub CLI auth
+# ──────────────────────────────────────
+echo ""
+echo "[8] Checking GitHub CLI auth..."
+if gh auth status &>/dev/null; then
+  GH_USER=$(gh api user --jq '.login' 2>/dev/null || echo "authenticated")
+  echo "      ✓ Already logged in as: $GH_USER"
+else
+  echo "      ✗ Not logged in. Starting gh auth login..."
+  echo ""
+  gh auth login
+fi
+
+# ──────────────────────────────────────
+# 9. Obsidian
+# ──────────────────────────────────────
+echo ""
+echo "[9] Checking if Obsidian is running..."
+if pgrep -x "Obsidian" &>/dev/null; then
+  echo "      ✓ Obsidian is open"
+else
+  echo "      ✗ Obsidian is not running."
+  echo ""
+  echo "      The obsidian CLI needs Obsidian open to work."
+  read -r -p "      Open Obsidian now? [Y/n] " open_obsidian
+  if [[ "$open_obsidian" =~ ^[Nn]$ ]]; then
+    echo "      Skipped — remember to open Obsidian before running /next"
+  else
+    open -a Obsidian 2>/dev/null || echo "      Could not open Obsidian — open it manually"
+    echo "      Waiting for Obsidian to start..."
+    sleep 3
+    pgrep -x "Obsidian" &>/dev/null && echo "      ✓ Obsidian is running" || echo "      Still not detected — may need a moment"
+  fi
+fi
+
+# ──────────────────────────────────────
 # Final checklist
 # ──────────────────────────────────────
 echo ""
 echo "=================================="
-echo "  Post-install checklist"
+echo "  Install complete"
 echo "=================================="
 echo ""
-echo "  [x] Agents installed         → ~/.claude/agents/ (65 agents)"
-echo "  [x] Commands installed       → ~/.claude/commands/ (next, test, lint, plan, marketing)"
-echo "  [x] Obsidian skill           → ~/.claude/plugins/cache/obsidian-skills/"
-echo "  [x] AgentKits Memory MCP     → ~/.claude/settings.json (mcpServers + hooks)"
-echo "  [x] Memory files             → ~/.claude/projects/.../memory/"
-echo "  [x] OBSIDIAN_VAULT           → added to shell profile"
+echo "  [x] Agents (65)        → ~/.claude/agents/"
+echo "  [x] Commands           → ~/.claude/commands/ (next, test, lint, plan, marketing)"
+echo "  [x] Obsidian skill     → ~/.claude/plugins/cache/obsidian-skills/"
+echo "  [x] Memory MCP         → ~/.claude/settings.json"
+echo "  [x] Memory files       → ~/.claude/projects/.../memory/"
+echo "  [x] OBSIDIAN_VAULT     → shell profile"
+echo "  [x] GitHub CLI         → checked/configured"
+echo "  [x] Obsidian           → checked/launched"
 echo ""
-echo "  One manual step:"
+echo "  Per-project setup (one time per repo):"
+echo "    echo 'ProjectName' > .claude/obsidian-project"
+echo "    git add .claude/ && git commit -m 'Add claude-ninja integration'"
 echo ""
-echo "  [ ] gh auth login"
-echo "        Required for GitHub CLI tools and agent-organizer repo access."
-echo "        Run: gh auth login"
-echo ""
-echo "  [ ] Open Obsidian with the TheOwnerStack vault before starting any session."
-echo "        The obsidian CLI requires Obsidian to be running."
-echo ""
-echo "Done. Welcome back."
+echo "Done. Welcome back, dan1d."
 echo ""
