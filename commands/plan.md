@@ -1,3 +1,8 @@
+# /plan — claude-ninja
+# Inspired by affaan-m/everything-claude-code (commands/plan.md)
+# Adapted: uses agent-organizer + Obsidian Dev Tracker instead of the upstream planner agent.
+# This file is bundled in claude-ninja — no dependency on the upstream repo at runtime.
+
 Analyse the task and produce a phased execution plan before doing any work.
 
 **Task:** $ARGUMENTS

@@ -20,7 +20,7 @@ npx github:dan1d/claude-ninja
 | `plugins/obsidian-skills/` | Obsidian CLI skill plugin |
 | `memory/theownerstack/` | Workspace memory for theownerstack projects |
 | `memory/paydaybooks/` | Workspace memory for PaydayBooks (shopify-project) |
-| `obsidian/TheOwnerStack/` | Obsidian vault notes: Project Guidelines, LeadFound, PaydayBooks |
+| `obsidian/TheOwnerStack/` | Obsidian vault notes: Project Guidelines, LeadFound, PaydayBooks, claude-ninja |
 | `skills/marketing/` | AgentKits Marketing skills |
 | `bin/cli.js` | npx entry point |
 | `src/installer.js` | Orchestrates all install steps |
