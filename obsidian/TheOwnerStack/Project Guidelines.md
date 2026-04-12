@@ -18,6 +18,7 @@ How every new project in this workspace is set up. Claude reads this and **gener
 - **Zero lint offenses.** RuboCop (Ruby) / ESLint or Biome (JS/TS). 0 offenses before committing.
 - **No Co-Authored-By in commits. Ever.**
 - **Never trust agent coverage claims.** Agents run partial suites and report "100% coverage" incorrectly. Always verify with the full suite (`bundle exec rspec` / `jest`) before accepting coverage as done. Every agent prompt that writes tests must end with: "run the full suite and confirm 100% before declaring done."
+- **Run `test-judge` after every green suite.** 100% coverage is the floor, not the ceiling. After the suite goes green, invoke the `test-judge` agent (Opus) to evaluate test quality: vacuous assertions, mocks that defeat their purpose, missing network error branches, and adapter rescue gaps. The `/test` command does this automatically.
 - **Network error branches are mandatory.** Every HTTP client method needs a `to_raise(Faraday::ConnectionFailed...)` / `axios` network error test. HTTP status code tests alone do not cover the `rescue StandardError` block inside `begin`.
 - **Adapter/wrapper rescue branches need their own tests.** If an outer spec mocks the adapter (using doubles), the adapter's own rescue blocks are never hit. Add dedicated unit specs for the adapter with real WebMock 401/500 stubs.
 

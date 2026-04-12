@@ -248,6 +248,7 @@ This is a comprehensive list of all available agents organized by expertise area
 | Campaign coordination, status tracking | `project-manager` |
 | Stripe/payment flows, checkout, webhooks | `payment-integration` |
 | TDD coordination, test-first workflow enforcement | `tdd-orchestrator` |
+| Test quality evaluation after green suite — vacuous assertions, mock gaps, missing network error branches, adapter rescue coverage | `test-judge` |
 | Business analysis, startup metrics, product decisions | `startup-analyst` |
 | SaaS unit economics, LTV/CAC, MRR/ARR, burn, runway, financial modeling | `financial-analyst` |
 | Startup reality check, pitch roast, fatal flaw identification | `startup-roast` |
