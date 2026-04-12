@@ -11,12 +11,15 @@ How every new project in this workspace is set up. Claude reads this and **gener
 ## Philosophy
 
 - **Obsidian is the source of truth** for every project. Tasks, decisions, preferences, bugs — all live there. CLAUDE.md points to Obsidian; Obsidian holds the content.
-- **Session continuity via 4 reads.** Every session starts by reading 4 Obsidian notes (User Profile, Preferences, Known Issues, Dev Tracker). Full context, no re-explanation.
+- **Session continuity via 5 reads.** Every session starts by reading 5 Obsidian notes (User Profile, Preferences, Known Issues, Key Decisions, Dev Tracker). Full context, no re-explanation.
 - **"next" = full context.** One word. Claude reads Obsidian, shows what's in progress, picks the right agent, starts working.
 - **Agents are specialists.** Project-level agents in `.claude/agents/` override global ones with stack-specific knowledge.
 - **TDD always.** Failing test first. 100% line + branch coverage (Ruby). 100% line (JS). Suite must pass before any task is marked done.
 - **Zero lint offenses.** RuboCop (Ruby) / ESLint or Biome (JS/TS). 0 offenses before committing.
 - **No Co-Authored-By in commits. Ever.**
+- **Never trust agent coverage claims.** Agents run partial suites and report "100% coverage" incorrectly. Always verify with the full suite (`bundle exec rspec` / `jest`) before accepting coverage as done. Every agent prompt that writes tests must end with: "run the full suite and confirm 100% before declaring done."
+- **Network error branches are mandatory.** Every HTTP client method needs a `to_raise(Faraday::ConnectionFailed...)` / `axios` network error test. HTTP status code tests alone do not cover the `rescue StandardError` block inside `begin`.
+- **Adapter/wrapper rescue branches need their own tests.** If an outer spec mocks the adapter (using doubles), the adapter's own rescue blocks are never hit. Add dedicated unit specs for the adapter with real WebMock 401/500 stubs.
 
 ---
 
@@ -128,6 +131,7 @@ Table: agent name → what it's for
       "Bash(obsidian vault=\"TheOwnerStack\" read path=\"<Name>/Meta/User Profile.md\")",
       "Bash(obsidian vault=\"TheOwnerStack\" read path=\"<Name>/Meta/Preferences & Feedback.md\")",
       "Bash(obsidian vault=\"TheOwnerStack\" read path=\"<Name>/Meta/Known Issues.md\")",
+      "Bash(obsidian vault=\"TheOwnerStack\" read path=\"<Name>/Meta/Key Decisions.md\")",
       "Bash(obsidian vault=\"TheOwnerStack\" read path=\"<Name>/Dev/Dev Tracker.md\")",
       "Bash(obsidian vault=\"TheOwnerStack\" read path=\"<Name>/Dev/*\")",
       "Bash(obsidian vault=\"TheOwnerStack\" append path=\"<Name>/Dev/Dev Tracker.md\"*)",
@@ -176,7 +180,7 @@ Keep global: `security-auditor`, `postgres-pro`
 ## Slash Commands — Content Patterns
 
 ### next.md
-1. Run 4 Obsidian reads
+1. Run 5 Obsidian reads
 2. Read Dev Tracker → identify In Progress (or first Up Next)
 3. Show user: what we're working on + 3-5 bullet plan
 4. Route to correct agent per CLAUDE.md routing table
@@ -211,6 +215,7 @@ In `~/.claude/projects/<workspace>/memory/MEMORY.md`, add:
 obsidian vault="TheOwnerStack" read path="<Name>/Meta/User Profile.md"
 obsidian vault="TheOwnerStack" read path="<Name>/Meta/Preferences & Feedback.md"
 obsidian vault="TheOwnerStack" read path="<Name>/Meta/Known Issues.md"
+obsidian vault="TheOwnerStack" read path="<Name>/Meta/Key Decisions.md"
 obsidian vault="TheOwnerStack" read path="<Name>/Dev/Dev Tracker.md"
 ```
 ```
