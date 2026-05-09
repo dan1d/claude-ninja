@@ -44,30 +44,45 @@ Everything else is generated from these 3 inputs using the patterns below.
 
 Every project gets: `TheOwnerStack/<ProjectName>/`
 
+The only **required** file is `Dev/Dev Tracker.md`. Everything else is optional and grows as the project matures.
+
+**Minimal (enough to start):**
+
 ```
 <ProjectName>/
-├── 00 - Project Overview.md      ← architecture, stack, domain model, quick ref
-├── Meta/
-│   ├── User Profile.md           ← who Daniel is, working style, background
-│   ├── Preferences & Feedback.md ← rules learned from working together
-│   ├── Key Decisions.md          ← architectural choices + why (append-only, date-stamped)
-│   └── Known Issues.md           ← bugs and gaps, priority-ordered (HIGH/MEDIUM/LOW)
+└── Dev/
+    └── Dev Tracker.md            ← In Progress / Up Next / Completed (REQUIRED)
+```
+
+**Full structure (mature project — e.g. gymsratz):**
+
+```
+<ProjectName>/
+├── Product Vision & Envision.md  ← what the product is, who it's for, architecture
+├── CEO Plan.md                   ← roadmap, go-to-market, pricing, projections
+├── Competitive Analysis.md       ← market landscape, competitor feature gaps
+├── Design Prompt.md              ← full UI/UX spec for Claude Design
+├── Decisions.md                  ← architectural choices + why (append-only)
 └── Dev/
     ├── Dev Tracker.md            ← In Progress / Up Next / Completed
-    └── <Feature>.md              ← deep-dive notes per major feature (optional)
+    └── Tickets.md                ← backlog with acceptance criteria (optional)
 ```
 
 ### What goes in each note
 
-**User Profile.md** — Name, role, background (Argentine founder, 14+ yrs Rails, terse communicator, short messages = just do it). Same across all projects — copy from PaydayBooks/Meta/User Profile.md and adjust role.
+**Dev Tracker.md** — Three sections: `## In Progress`, `## Up Next`, `## Completed`. This is what "/next" reads to know what to work on. Each task has a checkbox, description, date, plan, and files list.
 
-**Preferences & Feedback.md** — Always starts with "Obsidian is the source of truth". Includes: no trailing summaries, TDD mandatory, no Co-Authored-By, stack-specific rules. Grows over time.
+**Product Vision & Envision.md** — Product definition, user roles, data model, payment architecture, growth engine. Created on day 1 of a new product. This is the "what" and "why".
 
-**Key Decisions.md** — Append-only. Format: `## YYYY-MM-DD — Decision Title` then Decision / Why / Impact.
+**CEO Plan.md** — Phased roadmap, go-to-market strategy, pricing tiers, revenue projections, risk register. This is the "how" and "when".
 
-**Known Issues.md** — Prioritised list. HIGH (blocks launch), MEDIUM (important but not blocking), LOW (nice to fix).
+**Competitive Analysis.md** — Direct competitors, pricing benchmarks, feature gap analysis. Informs pricing and positioning.
 
-**Dev Tracker.md** — Three sections: `## In Progress`, `## Up Next`, `## Completed`. This is what "next" reads to know what to work on.
+**Design Prompt.md** — Full UI/UX spec to paste into Claude Design or similar AI design tools. Covers all surfaces, roles, screens.
+
+**Decisions.md** — Append-only log. Format: `## YYYY-MM-DD — Decision Title` then Decision / Why / Impact.
+
+**Tickets.md** — Detailed ticket backlog with epic grouping, priorities, dependencies, and acceptance criteria.
 
 ---
 
@@ -129,11 +144,7 @@ Table: agent name → what it's for
 {
   "permissions": {
     "allow": [
-      "Bash(obsidian vault=\"TheOwnerStack\" read path=\"<Name>/Meta/User Profile.md\")",
-      "Bash(obsidian vault=\"TheOwnerStack\" read path=\"<Name>/Meta/Preferences & Feedback.md\")",
-      "Bash(obsidian vault=\"TheOwnerStack\" read path=\"<Name>/Meta/Known Issues.md\")",
-      "Bash(obsidian vault=\"TheOwnerStack\" read path=\"<Name>/Meta/Key Decisions.md\")",
-      "Bash(obsidian vault=\"TheOwnerStack\" read path=\"<Name>/Dev/Dev Tracker.md\")",
+      "Bash(obsidian vault=\"TheOwnerStack\" read path=\"<Name>/*\")",
       "Bash(obsidian vault=\"TheOwnerStack\" read path=\"<Name>/Dev/*\")",
       "Bash(obsidian vault=\"TheOwnerStack\" append path=\"<Name>/Dev/Dev Tracker.md\"*)",
       "Bash(obsidian task toggle ref=\"<Name>/*\"*)",
@@ -213,10 +224,6 @@ In `~/.claude/projects/<workspace>/memory/MEMORY.md`, add:
 ## <ProjectName> Session Start
 
 ```bash
-obsidian vault="TheOwnerStack" read path="<Name>/Meta/User Profile.md"
-obsidian vault="TheOwnerStack" read path="<Name>/Meta/Preferences & Feedback.md"
-obsidian vault="TheOwnerStack" read path="<Name>/Meta/Known Issues.md"
-obsidian vault="TheOwnerStack" read path="<Name>/Meta/Key Decisions.md"
 obsidian vault="TheOwnerStack" read path="<Name>/Dev/Dev Tracker.md"
 ```
 ```
@@ -227,9 +234,11 @@ Also create `memory/project_<name>.md` — a pointer file, not content. Just: wh
 
 ## Reference Implementations
 
-| Project | Obsidian Folder | Stack | Repo |
-|---------|-----------------|-------|------|
-| PaydayBooks | `PaydayBooks/` | Rails 8.1.2 · Ruby 3.4 · React 19 · Shopify+QBO | `shopify-project/` |
-| LeadFound | `LeadFound/` | Rails 8.1.3 · Ruby 4.0.2 · SolidQueue · Flowbite | `lead_found/` |
+| Project | Obsidian Folder | Stack | Vault Style | Repo |
+|---------|-----------------|-------|-------------|------|
+| GymsRatz | `gymsratz/` | Turborepo · Expo · Electron · Next.js · Supabase · tRPC | Product-first (Vision, CEO Plan, Competitive Analysis, Design Prompt, Tickets) | `gymsratz/` |
+| Comandita | `comandita/` | Next.js · Baileys (WhatsApp) · Drizzle | Product-first (Vision, Design Prompt, Decisions) | `comandita/` |
+| PaydayBooks | `PaydayBooks/` | Rails 8.1.2 · Ruby 3.4 · React 19 · Shopify+QBO | Meta-folder (User Profile, Preferences, Known Issues, Key Decisions) | `shopify-project/` |
+| LeadFound | `LeadFound/` | Rails 8.1.3 · Ruby 4.0.2 · SolidQueue · Flowbite | Meta-folder | `lead_found/` |
 
-When generating a new project, use these as tone and depth reference for each note.
+When generating a new project, prefer the product-first vault style (gymsratz/comandita) — put product documents at the root, keep only Dev Tracker in `Dev/`.
