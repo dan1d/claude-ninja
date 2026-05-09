@@ -294,6 +294,60 @@ const ROUTING_RULES = [
       return s;
     },
   },
+  {
+    agent: 'plan-judge',
+    description: 'Plan quality review, completeness check, gap analysis',
+    score: (p) => {
+      let s = 0;
+      if (/\breview.*(plan|proposal)\b/i.test(p)) s += 6;
+      if (/\bplan.*(complete|gap|miss)\w*/i.test(p)) s += 5;
+      if (/\binfrastructure.cover\w*/i.test(p)) s += 5;
+      return s;
+    },
+  },
+  {
+    agent: 'impl-judge',
+    description: 'Implementation review, code vs plan, wiring check',
+    score: (p) => {
+      let s = 0;
+      if (/\bimplementation.review\b/i.test(p)) s += 6;
+      if (/\bcode.vs.plan\b/i.test(p)) s += 6;
+      if (/\bdead.button\w*/i.test(p)) s += 5;
+      if (/\bhandler.wir\w*/i.test(p)) s += 5;
+      if (/\bunwired\b/i.test(p)) s += 5;
+      return s;
+    },
+  },
+  {
+    agent: 'integration-judge',
+    description: 'Integration check, service connectivity, env var verification',
+    score: (p) => {
+      let s = 0;
+      if (/\bintegration.check\b/i.test(p)) s += 6;
+      if (/\bservice.connect\w*/i.test(p)) s += 5;
+      if (/\benv.var\w*/i.test(p)) s += 4;
+      if (/\bsmoke.check\b/i.test(p)) s += 5;
+      if (/\bhealth.check\b/i.test(p)) s += 4;
+      return s;
+    },
+  },
+  {
+    agent: 'e2e-judge',
+    description: 'Browser-based E2E verification, UI testing, smoke test, Playwright',
+    score: (p) => {
+      let s = 0;
+      if (/\be2e\b/i.test(p)) s += 5;
+      if (/\bend.to.end\b/i.test(p)) s += 5;
+      if (/\bbrowser.test\w*/i.test(p)) s += 5;
+      if (/\bplaywright\b/i.test(p)) s += 4;
+      if (/\bsmoke.test\w*/i.test(p)) s += 5;
+      if (/\bui.test\w*/i.test(p)) s += 4;
+      if (/\bcheck.the.ui\b/i.test(p)) s += 4;
+      if (/\btest.the.ui\b/i.test(p)) s += 4;
+      if (/\bbrowser.verif\w*/i.test(p)) s += 4;
+      return s;
+    },
+  },
 ];
 
 // Minimum score threshold before we emit a routing directive

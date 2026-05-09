@@ -21,6 +21,31 @@ Analyse the task and produce a phased execution plan before doing any work.
 
 3. Present the plan for user approval before executing anything.
 
+3.5. Invoke the `plan-judge` agent to evaluate the plan for:
+   - Infrastructure coverage (email, auth, storage, payments)
+   - End-to-end path completeness (UI -> API -> DB -> side effects)
+   - Error path coverage
+   - Environment & config requirements
+   - Verification strategy
+   - Integration points
+   
+   **Reflexion loop:** If plan-judge returns WARN or FAIL:
+   - Inject the judge's findings into the plan context
+   - Revise the plan to address the specific gaps
+   - Re-invoke plan-judge on the revised plan (max 2 retries)
+   - If still failing after 2 retries, present plan + unresolved findings to user
+
 4. Once approved, spawn the recommended agents in phases.
 
-5. After all phases complete, update the Dev Tracker in Obsidian.
+5. After implementation, run the test suite:
+   - If Gemfile present → `bundle exec rspec`
+   - If package.json present → `npm test` or `npx jest`
+   - Report pass/fail count, failures with file:line, and coverage status
+
+6. Run the linter:
+   - If Gemfile present → `bundle exec rubocop app/ spec/`
+   - If package.json and eslint → `npx eslint .`
+   - If biome.json → `npx biome check .`
+   - Auto-fix safe offenses. Report remaining issues.
+
+7. After all phases complete, update the Dev Tracker in Obsidian.

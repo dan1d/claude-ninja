@@ -1,6 +1,6 @@
 # claude-ninja
 
-A batteries-included Claude Code configuration kit. Ships 49 dev agents, 20 marketing agents, 5 global commands, auto-routing hooks, Obsidian integration, and persistent memory &mdash; installed with one command.
+A batteries-included Claude Code configuration kit. Ships 53 dev agents (including a 5-judge quality pipeline), 20 marketing agents, 3 global commands, auto-routing hooks, Obsidian integration, and persistent memory &mdash; installed with one command.
 
 ```
   ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -34,9 +34,9 @@ That's it. The installer walks you through each step with progress indicators an
 
 | Component | Count | Destination |
 |-----------|-------|-------------|
-| Dev agents | 49 | `~/.claude/agents/` |
+| Dev agents | 53 | `~/.claude/agents/` |
 | Marketing agents | 20 | `~/.claude/agents/` |
-| Global commands | 5 | `~/.claude/commands/` |
+| Global commands | 3 | `~/.claude/commands/` |
 | Auto-route hooks | 2 | `~/.claude/hooks/` + `settings.json` |
 | Obsidian skill plugin | 1 | `~/.claude/plugins/cache/` |
 | Memory MCP server | 1 | `~/.claude/settings.json` |
@@ -77,20 +77,52 @@ You run /next
 
 | Command | What it does |
 |---------|-------------|
-| `/next` | Resume the most recent task from your Obsidian Dev Tracker |
-| `/test` | Run your test suite with TDD discipline |
-| `/lint` | Run linters and auto-fix |
-| `/plan` | Create an implementation plan before coding |
+| `/plan` | Create plan, execute, run tests + lint, update Obsidian tracker |
+| `/e2e` | Run E2E tests via Playwright MCP with integration pre-checks |
 | `/marketing` | Route to the marketing agent team |
 
 ### 3. Hooks &mdash; automatic routing
 
-Two hooks fire automatically to route Claude to specialists:
+Three hooks fire automatically:
 
 - **`auto-route.js`** (PostToolUse) &mdash; after every file edit, matches the file path to a specialist (JSX → `react-pro`, models → `ruby-on-rails-pro`, etc.)
 - **`prompt-route.js`** (UserPromptSubmit) &mdash; scores your prompt against keyword rules and routes to the matching domain agent
+- **`post-task-review.js`** (Stop) &mdash; after every task that modifies source files, automatically runs code-reviewer-pro → impl-judge → test-judge (with reflexion loops), then updates the Obsidian Dev Tracker
 
-### 4. Obsidian integration (optional)
+### 4. Quality pipeline &mdash; 5-judge LLM-as-Judge
+
+Five LLM-as-Judge agents form a quality gate at every development stage. Each gate uses a **reflexion loop**: if the verdict is WARN/FAIL, the critique is injected as context and the agent retries automatically (max 2 retries). Inspired by [Hive](https://www.open-hive.com/) patterns (Reflexion from Shinn et al., NeurIPS 2023).
+
+```
+/plan → [plan-judge] ←reflexion─┐
+            │                    │
+       WARN/FAIL? ── revise ────┘
+            │ PASS
+            ▼
+     implement → [impl-judge] ←reflexion─┐    ← auto (post-task hook)
+                      │                   │
+                 WARN/FAIL? ── fix ──────┘
+                      │ PASS
+                      ▼
+              [test-judge] ←reflexion─┐        ← auto (post-task hook)
+                    │                  │
+               WARN/FAIL? ── fix ────┘
+                    │ PASS
+                    ▼
+         [integration-judge] → [e2e-judge]     ← manual (/e2e)
+```
+
+| Judge | When it fires | What it catches |
+|-------|--------------|-----------------|
+| `plan-judge` | Inside `/plan` (step 3.5) | Missing infrastructure, incomplete paths, no error handling, no verification strategy |
+| `impl-judge` | Automatic (post-task hook) | Dead buttons, unwired handlers, missing routes, defined-but-never-called side effects |
+| `test-judge` | Automatic (post-task hook) | Vacuous assertions, mocks that defeat their purpose, missing edge cases |
+| `integration-judge` | `/e2e` pre-check | Missing env vars, unreachable services, expired API keys, pending migrations |
+| `e2e-judge` | `/e2e` | Off-screen elements, stuck spinners, UI/network state mismatch, dead interactions |
+
+Only `/plan` needs to be invoked manually. Everything else fires automatically via hooks.
+
+### 5. Obsidian integration (optional)
 
 If you use Obsidian for project notes, claude-ninja connects Claude Code to your vault. This requires a few pieces:
 
@@ -226,7 +258,7 @@ The Dev Tracker follows a simple format that Claude reads and writes:
 
 When you run `/next`, Claude reads this file, sees what's in progress (or picks the first item from Up Next), and starts working. When a task is done, it ticks the checkbox and moves it to Completed.
 
-### 5. Persistent memory
+### 6. Persistent memory
 
 An MCP-based SQLite memory system (via [AgentKits Memory](https://github.com/aitytech/agentkits-memory)) that persists across sessions:
 
@@ -239,7 +271,7 @@ An MCP-based SQLite memory system (via [AgentKits Memory](https://github.com/ait
 
 ## All Agents
 
-### Dev Agents (49)
+### Dev Agents (53)
 
 | Agent | Specialty |
 |-------|-----------|
@@ -258,6 +290,7 @@ An MCP-based SQLite memory system (via [AgentKits Memory](https://github.com/ait
 | `devops-incident-responder` | Incident response, RCA |
 | `documentation-expert` | Technical documentation |
 | `dx-optimizer` | Developer experience improvement |
+| `e2e-judge` | LLM-as-Judge for browser E2E verification |
 | `electron-pro` | Cross-platform desktop apps |
 | `financial-analyst` | SaaS metrics, financial modeling |
 | `frontend-developer` | React components, UI |
@@ -265,13 +298,16 @@ An MCP-based SQLite memory system (via [AgentKits Memory](https://github.com/ait
 | `golang-pro` | Go architecture and concurrency |
 | `graphql-architect` | GraphQL API design |
 | `heroku-pro` | Heroku deployment optimization |
+| `impl-judge` | LLM-as-Judge for implementation completeness |
 | `incident-responder` | Production incident commander |
+| `integration-judge` | Pre-E2E service connectivity verifier |
 | `legacy-modernizer` | Monolith decomposition, upgrades |
 | `ml-engineer` | ML model lifecycle, MLOps |
 | `mobile-developer` | React Native, Flutter |
 | `nextjs-pro` | Next.js SSR/SSG, App Router |
 | `payment-integration` | Stripe, PayPal, webhooks |
 | `performance-engineer` | Profiling, optimization |
+| `plan-judge` | LLM-as-Judge for plan quality evaluation |
 | `postgres-pro` | PostgreSQL, PgLite |
 | `product-manager` | Product strategy, roadmaps |
 | `prompt-engineer` | LLM prompt design |
@@ -374,15 +410,13 @@ mkdir -p .claude/agents/
 
 ```
 claude-ninja/
-├── agents/                     # 49 dev agent definitions (.md)
+├── agents/                     # 53 dev agent definitions (.md)
 │   └── marketing/              # 20 marketing agents (AgentKits Marketing)
 ├── bin/
 │   └── cli.js                  # npx entry point
 ├── commands/                   # Global slash commands
-│   ├── next.md                 # Resume work from Dev Tracker
-│   ├── test.md                 # TDD test runner
-│   ├── lint.md                 # Linter runner
-│   ├── plan.md                 # Implementation planner
+│   ├── plan.md                 # Plan → execute → test → lint → update tracker
+│   ├── e2e.md                  # E2E testing with integration pre-checks
 │   ├── marketing.md            # Marketing dispatcher
 │   └── marketing/              # Marketing sub-commands
 ├── memory/                     # Project memory files (per-workspace)

@@ -83,7 +83,14 @@ function main() {
         `You MUST do both of the following before this task is considered done:\n\n` +
         `1. CODE REVIEW — Use the Agent tool to invoke "code-reviewer-pro" subagent.\n` +
         `   Pass it the changed files and ask it to review for correctness, security, and pattern consistency.\n\n` +
-        `2. OBSIDIAN UPDATE — Update the Dev Tracker at: ${tracker}\n` +
+        `2. IMPLEMENTATION REVIEW — Use the Agent tool to invoke "impl-judge" subagent.\n` +
+        `   Pass it the plan file (from .claude/plans/) and the changed files listed above.\n` +
+        `   Ask it to verify: all planned features are implemented, handlers are wired, routes connected, env vars documented.\n` +
+        `   **Reflexion:** If impl-judge returns WARN or FAIL, fix the flagged gaps, then re-invoke impl-judge (max 2 retries).\n\n` +
+        `3. TEST QUALITY REVIEW — Use the Agent tool to invoke "test-judge" subagent.\n` +
+        `   Pass it the changed files. Ask it to verify test quality: no vacuous assertions, mocks serve a purpose, edge cases covered, error branches tested.\n` +
+        `   **Reflexion:** If test-judge returns WARN or FAIL, fix the flagged test issues, re-run the test suite, then re-invoke test-judge (max 2 retries).\n\n` +
+        `4. OBSIDIAN UPDATE — Update the Dev Tracker at: ${tracker}\n` +
         `   - Move the active task from "## In Progress" to "## Completed"\n` +
         `   - Mark it [x] and add the completion timestamp: ${taskDate}\n` +
         `   - Add key decisions or findings as sub-bullets\n` +

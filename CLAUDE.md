@@ -16,7 +16,7 @@ npx github:dan1d/claude-ninja
 |------|----------|
 | `agents/` | 41 dev agents (base) |
 | `agents/marketing/` | 20 marketing agents (AgentKits Marketing) |
-| `commands/` | 5 global commands: next, test, lint, plan, marketing |
+| `commands/` | 3 global commands: plan, e2e, marketing |
 | `plugins/obsidian-skills/` | Obsidian CLI skill plugin |
 | `memory/theownerstack/` | Workspace memory for theownerstack projects |
 | `memory/paydaybooks/` | Workspace memory for PaydayBooks (shopify-project) |

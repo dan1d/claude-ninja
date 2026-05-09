@@ -201,6 +201,10 @@ This is a comprehensive list of all available agents organized by expertise area
 
 - **qa-expert** - Comprehensive quality assurance specialist developing testing strategies, quality processes, and ensuring software meets the highest standards of reliability.
 - **test-automator** - Test automation specialist creating comprehensive test suites including unit tests, integration tests, E2E testing, and automated testing infrastructure.
+- **e2e-judge** - LLM-as-Judge for browser-based E2E testing. Drives a running dev server via Playwright MCP, evaluates UI correctness from accessibility snapshots, checks network requests and console for errors. Outputs PASS/WARN/FAIL verdict.
+- **plan-judge** - LLM-as-Judge for plan quality. Evaluates plans for infrastructure coverage, end-to-end path completeness, error handling, env/config, and verification strategy before implementation begins.
+- **impl-judge** - LLM-as-Judge for implementation completeness. Compares code changes against the plan, checks handler wiring, route connectivity, import completeness, and side effect invocation.
+- **integration-judge** - Pre-E2E integration verifier. Checks that env vars are set, external services are reachable, API routes respond, DB is connected, and cross-service auth works.
 
 ### Data & AI Agents
 
@@ -249,6 +253,10 @@ This is a comprehensive list of all available agents organized by expertise area
 | Stripe/payment flows, checkout, webhooks | `payment-integration` |
 | TDD coordination, test-first workflow enforcement | `tdd-orchestrator` |
 | Test quality evaluation after green suite — vacuous assertions, mock gaps, missing network error branches, adapter rescue coverage | `test-judge` |
+| Browser-based E2E verification — UI correctness, accessibility, network health, console errors, interactive flows | `e2e-judge` |
+| Plan quality evaluation — infrastructure coverage, path completeness, env/config, verification strategy | `plan-judge` |
+| Implementation completeness — plan adherence, handler wiring, route connectivity, side effect wiring | `impl-judge` |
+| Pre-E2E integration verification — env vars set, services reachable, API routes healthy, DB connected | `integration-judge` |
 | Business analysis, startup metrics, product decisions | `startup-analyst` |
 | SaaS unit economics, LTV/CAC, MRR/ARR, burn, runway, financial modeling | `financial-analyst` |
 | Startup reality check, pitch roast, fatal flaw identification | `startup-roast` |
