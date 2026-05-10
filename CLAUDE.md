@@ -7,7 +7,8 @@ Personal Claude Code configuration backup and installer for dan1d. Installs agen
 ## Install command
 
 ```bash
-npx github:dan1d/claude-ninja
+npx github:dan1d/claude-ninja            # first install (skip existing)
+npx github:dan1d/claude-ninja --update   # overwrite agents, commands, hooks, plugins
 ```
 
 ## What's in this repo

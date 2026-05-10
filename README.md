@@ -30,6 +30,16 @@ npx github:dan1d/claude-ninja
 
 That's it. The installer walks you through each step with progress indicators and skips anything already installed.
 
+### Updating
+
+Already installed? Pull the latest agents, commands, hooks, and plugins:
+
+```bash
+npx github:dan1d/claude-ninja --update
+```
+
+This overwrites code files (agents, commands, hooks, plugins) but preserves your local data (memory files, Obsidian notes) since those evolve per-machine.
+
 ### What gets installed
 
 | Component | Count | Destination |

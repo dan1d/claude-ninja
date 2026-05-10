@@ -1,3 +1,4 @@
 #!/usr/bin/env node
 'use strict';
-require('../src/installer');
+const update = process.argv.includes('--update');
+require('../src/installer').install({ update });

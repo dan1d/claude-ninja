@@ -48,9 +48,14 @@ const header = () => {
   console.log('');
 };
 
-async function main() {
+async function main(opts = {}) {
   header();
-  console.log('  Installing your AI development environment...');
+
+  if (opts.update) {
+    console.log('  ' + chalk.yellow('⟳  Update mode') + ' — overwriting agents, commands, hooks & plugins...');
+  } else {
+    console.log('  Installing your AI development environment...');
+  }
   console.log('');
 
   const results = [];
@@ -65,7 +70,7 @@ async function main() {
     let result;
     try {
       const mod = require(step.mod);
-      result = await mod.run(ROOT);
+      result = await mod.run(ROOT, opts);
     } catch (err) {
       result = { ok: false, message: `${step.label} crashed`, error: err.message };
     }
@@ -117,4 +122,4 @@ async function main() {
   console.log('');
 }
 
-main().catch(console.error);
+module.exports = { install: (opts) => main(opts).catch(console.error) };
