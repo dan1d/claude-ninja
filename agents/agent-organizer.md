@@ -257,6 +257,7 @@ This is a comprehensive list of all available agents organized by expertise area
 | Plan quality evaluation — infrastructure coverage, path completeness, env/config, verification strategy | `plan-judge` |
 | Implementation completeness — plan adherence, handler wiring, route connectivity, side effect wiring | `impl-judge` |
 | Pre-E2E integration verification — env vars set, services reachable, API routes healthy, DB connected | `integration-judge` |
+| App audit, find dead UI, what works/doesn't work, catalog broken elements, mock data inventory | `app-auditor` |
 | Business analysis, startup metrics, product decisions | `startup-analyst` |
 | SaaS unit economics, LTV/CAC, MRR/ARR, burn, runway, financial modeling | `financial-analyst` |
 | Startup reality check, pitch roast, fatal flaw identification | `startup-roast` |
@@ -295,6 +296,11 @@ This is a comprehensive list of all available agents organized by expertise area
 **Product & Strategy:**
 
 - **product-manager** - Strategic product management specialist developing product roadmaps, conducting market analysis, and aligning business objectives with technical implementation.
+
+### Audit & Quality Agents
+
+- **app-auditor** - Source-level application auditor that catalogs dead UI elements, mock data, and unwired handlers using grep + Read (10x faster than browser testing). Follows a 3-phase pipeline: source audit → UX behavior mapping → prioritized tickets. Auto-detects framework (React/Electron/Rails/Next.js). Use when the user wants to audit an app, find what works, or catalog broken elements.
+- **test-judge** - LLM-as-Judge for test suite quality. Evaluates whether tests are meaningful after they pass — catches vacuous assertions, mocks that defeat their purpose, missing edge cases, and design smell.
 
 ### Specialized Domain Experts
 

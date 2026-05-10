@@ -14,7 +14,7 @@ npx github:dan1d/claude-ninja
 
 | Path | Contents |
 |------|----------|
-| `agents/` | 41 dev agents (base) |
+| `agents/` | 42 dev agents (base) |
 | `agents/marketing/` | 20 marketing agents (AgentKits Marketing) |
 | `commands/` | 3 global commands: plan, e2e, marketing |
 | `plugins/obsidian-skills/` | Obsidian CLI skill plugin |
@@ -62,6 +62,7 @@ All steps are **non-destructive** — skip existing files, never overwrite.
 | Agent | Purpose |
 |-------|---------|
 | `agent-organizer` | Routes tasks to the right specialist |
+| `app-auditor` | Source-level audit: dead UI, mock data, unwired handlers (3-phase pipeline) |
 | `ruby-on-rails-pro` | Base Rails agent (overridden per project) |
 | `attraction-specialist` | Lead gen, landing pages, TOFU |
 | `payment-integration` | Stripe, checkout, webhooks |
@@ -89,7 +90,8 @@ rules and prints `[CLAUDE-NINJA PROMPT-ROUTE]` with a directive to invoke the
 correct specialist agent. Min score threshold prevents false positives on generic prompts.
 
 Covered domains: rails, react, rails+react (full-stack), tdd, security, database,
-debugger, stripe/payments, heroku, ci/cd, performance, marketing (TOFU/landing pages).
+debugger, stripe/payments, heroku, ci/cd, performance, marketing (TOFU/landing pages),
+app audit (dead UI, mock data, broken elements).
 
 ```bash
 echo '{"prompt":"add a Stripe webhook for subscription billing"}' | node ~/.claude/hooks/prompt-route.js

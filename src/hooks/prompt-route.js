@@ -276,6 +276,24 @@ const ROUTING_RULES = [
     },
   },
   {
+    agent: 'app-auditor',
+    description: 'App audit, dead UI scan, find what works/doesn\'t, catalog broken elements',
+    score: (p) => {
+      let s = 0;
+      if (/\baudit\b/i.test(p)) s += 5;
+      if (/\bdead.*(button|element|ui|handler)\b/i.test(p)) s += 6;
+      if (/\bwhat.works\b/i.test(p)) s += 4;
+      if (/\bwhat.*not.working\b/i.test(p)) s += 5;
+      if (/\bqu[eé].*funciona\b/i.test(p)) s += 5;
+      if (/\bmock.data\b/i.test(p)) s += 3;
+      if (/\bunwired\b/i.test(p)) s += 4;
+      if (/\bcatalog\b/i.test(p)) s += 2;
+      if (/\binventory\b/i.test(p)) s += 2;
+      if (/\bbroken.*(button|element|page)\b/i.test(p)) s += 4;
+      return s;
+    },
+  },
+  {
     agent: 'sparring-partner',
     description: 'Strategy stress-testing, devil\'s advocate, decision pressure-testing, debate',
     score: (p) => {
