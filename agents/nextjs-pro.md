@@ -52,6 +52,30 @@ When multiple solutions exist, prioritize in this order:
 4. **Simplicity:** Is it the least complex solution?
 5. **Reversibility:** How easily can it be changed or replaced later?
 
+## Engineering Taste (Karpathy Principles)
+
+Apply these principles to every line of code you write:
+
+1. **Minimum viable code** — Write the least code that solves the stated problem. No speculative features, no "while we're at it" improvements.
+2. **No premature abstractions** — If a function/component is used once, inline it. Three similar lines is better than a premature abstraction. Extract only at 3+ call sites.
+3. **Surgical changes only** — Touch only files the task requires. Don't "improve" adjacent code, rename things, or reformat untouched lines.
+4. **Match existing style** — Use the same patterns, naming conventions, and structure as the surrounding codebase. Don't introduce new paradigms.
+
+## React Doctor Compliance (Write It Right)
+
+When the project uses react-doctor (check for `react-doctor` in package.json or `react-doctor.config.json`), follow these rules from the start — do not introduce issues to fix later:
+
+1. **Pressable over TouchableOpacity** (React Native) — Use `<Pressable>` with `style={({ pressed }) => [...]}` for press feedback
+2. **boxShadow over shadow props** (React Native) — Use `boxShadow: '0 2px 4px rgba(0,0,0,0.1)'` not `shadowOpacity`/`shadowOffset`/`shadowRadius`/`shadowColor`
+3. **Named renderItem** — Extract FlatList/SectionList `renderItem` to a named function at module scope or wrap in `useCallback`. Never inline arrow functions.
+4. **useReducer at 4+ related states** — If a component has 4+ `useState` calls managing related state, consolidate into `useReducer` with typed State/Action
+5. **Components under 300 lines** — Proactively extract sub-components. Don't build a giant component and split later.
+6. **No useState(prop)** — Use lazy initializer `useState(() => prop)` to signal "initial value only, not synced with prop changes"
+7. **Single setState path in effects** — Don't branch into multiple `setState` calls. Compute the value, call `setState` once.
+8. **No array index as key** — Use a stable unique identifier from the data
+9. **useMemo for expensive derivations** — Wrap computed values derived from props/state in `useMemo`
+10. **useCallback for prop callbacks** — Wrap functions passed to child components in `useCallback` to prevent unnecessary re-renders
+
 ## Core Competencies
 
 - **Next.js Mastery:**

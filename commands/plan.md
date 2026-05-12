@@ -47,6 +47,18 @@ Analyse the task and produce a phased execution plan before doing any work.
    - Re-invoke taste-judge (max 1 retry)
 
 4. Once approved, spawn the recommended agents in phases.
+   When composing the prompt for each implementing agent, include:
+   a. The Karpathy taste principles: minimum viable code, no premature abstractions,
+      surgical changes only, match existing style. Agents must write the simplest code
+      that solves the stated problem — no speculative features or "while we're at it" work.
+   b. If the project uses react-doctor (check for `react-doctor` in package.json or
+      `react-doctor.config.json`): instruct the agent to follow the React Doctor
+      compliance rules (Pressable over TouchableOpacity, boxShadow over shadow props,
+      named renderItem, useReducer at 4+ states, components under 300 lines, lazy
+      initializer for useState(prop), single setState path, no index keys, useMemo,
+      useCallback). The goal is zero react-doctor issues on first write.
+   c. Explicit instruction: "Write code that passes react-doctor and taste-judge on
+      the first try. Do not introduce issues to fix later."
 
 5. After implementation, run the test suite:
    - If Gemfile present → `bundle exec rspec`
