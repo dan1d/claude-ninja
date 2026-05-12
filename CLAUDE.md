@@ -107,3 +107,20 @@ node bin/cli.js    # must run without errors
 ```
 
 No test suite yet — keep the installer simple and manually verify each step file.
+
+## Quality Gate Judge Pipeline
+
+The `/plan` command runs these judges automatically at the correct stages:
+
+| Stage | Judge | When | Condition |
+|-------|-------|------|-----------|
+| Pre-impl | `plan-judge` | After plan written | Always |
+| Pre-impl | `taste-judge` | After plan-judge | Always |
+| Post-impl | `impl-judge` | After code committed | Always |
+| Post-impl | `taste-judge` | After impl-judge | Always |
+| Post-impl | `react-doctor-judge` | After taste-judge | React project + react-doctor installed |
+| Post-test | `test-judge` | After tests pass | Always |
+| Pre-E2E | `integration-judge` | Before E2E runs | Always |
+| Post-browser | `e2e-judge` | After feature live | Always |
+
+**Reflexion loops:** plan-judge (2 retries), taste-judge (1 retry). If judges still fail after retries, findings are presented to the user for manual resolution.

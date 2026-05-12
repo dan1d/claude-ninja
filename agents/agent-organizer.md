@@ -205,6 +205,8 @@ This is a comprehensive list of all available agents organized by expertise area
 - **plan-judge** - LLM-as-Judge for plan quality. Evaluates plans for infrastructure coverage, end-to-end path completeness, error handling, env/config, and verification strategy before implementation begins.
 - **impl-judge** - LLM-as-Judge for implementation completeness. Compares code changes against the plan, checks handler wiring, route connectivity, import completeness, and side effect invocation.
 - **integration-judge** - Pre-E2E integration verifier. Checks that env vars are set, external services are reachable, API routes respond, DB is connected, and cross-service auth works.
+- **taste-judge** - LLM-as-Judge for engineering taste (Karpathy heuristics). Evaluates plans and code for over-engineering, premature abstractions, scope creep, and unnecessary complexity. Runs at plan stage and post-implementation.
+- **react-doctor-judge** - Post-implementation quality gate for React projects. Runs react-doctor, compares score against baseline, fails on regression. Only activates if project has react-doctor installed.
 
 ### Data & AI Agents
 
@@ -258,6 +260,8 @@ This is a comprehensive list of all available agents organized by expertise area
 | Implementation completeness — plan adherence, handler wiring, route connectivity, side effect wiring | `impl-judge` |
 | Pre-E2E integration verification — env vars set, services reachable, API routes healthy, DB connected | `integration-judge` |
 | App audit, find dead UI, what works/doesn't work, catalog broken elements, mock data inventory | `app-auditor` |
+| Engineering taste evaluation — over-engineering, premature abstractions, scope creep, Karpathy heuristics | `taste-judge` |
+| React code quality gate — react-doctor score regression check, only if react-doctor installed | `react-doctor-judge` |
 | Business analysis, startup metrics, product decisions | `startup-analyst` |
 | SaaS unit economics, LTV/CAC, MRR/ARR, burn, runway, financial modeling | `financial-analyst` |
 | Startup reality check, pitch roast, fatal flaw identification | `startup-roast` |

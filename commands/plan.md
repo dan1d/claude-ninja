@@ -35,6 +35,17 @@ Analyse the task and produce a phased execution plan before doing any work.
    - Re-invoke plan-judge on the revised plan (max 2 retries)
    - If still failing after 2 retries, present plan + unresolved findings to user
 
+3.6. Invoke the `taste-judge` agent to evaluate the plan for:
+   - Scope creep (features or refactors beyond the stated requirement)
+   - Premature architecture (abstractions before complexity demands them)
+   - Vague success criteria (phases without measurable completion targets)
+   
+   If taste-judge returns WARN or FAIL, simplify the plan:
+   - Remove "while we're at it" phases
+   - Inline premature abstractions
+   - Add measurable verification to vague phases
+   - Re-invoke taste-judge (max 1 retry)
+
 4. Once approved, spawn the recommended agents in phases.
 
 5. After implementation, run the test suite:
@@ -47,5 +58,14 @@ Analyse the task and produce a phased execution plan before doing any work.
    - If package.json and eslint → `npx eslint .`
    - If biome.json → `npx biome check .`
    - Auto-fix safe offenses. Report remaining issues.
+
+6.5. Run quality gate judges on the implementation:
+   a. Invoke `taste-judge` on the changed files (git diff --name-only)
+      - If WARN: note findings but continue
+      - If FAIL: fix taste violations before marking done
+   b. Detect react-doctor: check for `react-doctor.config.json` or `react-doctor` in package.json
+      - If detected: invoke `react-doctor-judge` on the affected app(s)
+      - If score regressed: fix issues before marking done
+      - If not detected: skip silently
 
 7. After all phases complete, update the Dev Tracker in Obsidian.
