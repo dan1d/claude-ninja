@@ -41,6 +41,7 @@ npx github:dan1d/claude-ninja
         ├─► steps/memory-files.js    — copy memory to ~/.claude/projects/.../memory/
         ├─► steps/hooks.js           — install auto-route + task gate hooks
         ├─► steps/mempalace.js       — install mempalace, MCP server + auto hooks
+        ├─► steps/cline.js           — agents, MCP, skills, rules → ~/.cline/
         ├─► steps/github-auth.js     — check gh auth, prompt login if needed
         └─► steps/obsidian-app.js    — check Obsidian running, offer to launch
 ```

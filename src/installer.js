@@ -15,6 +15,7 @@ const STEPS = [
   { key: 'memory-files',  label: 'Memory files',      mod: './steps/memory-files' },
   { key: 'hooks',         label: 'Auto-route hook',   mod: './steps/hooks' },
   { key: 'mempalace',     label: 'MemPalace',         mod: './steps/mempalace' },
+  { key: 'cline',         label: 'Cline',             mod: './steps/cline' },
   { key: 'github-auth',   label: 'GitHub CLI',        mod: './steps/github-auth' },
   { key: 'obsidian-app',  label: 'Obsidian',          mod: './steps/obsidian-app' },
 ];
