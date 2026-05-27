@@ -42,7 +42,7 @@ const header = () => {
   console.log(c('  ░') + '        ' + c('  ██▀   ██   ▀██        ') + '    ' + c('░'));
   console.log(c('  ░') + '                                        ' + c('░'));
   console.log(c('  ░') + '   ' + w('🥷  claude-ninja') + '                      ' + c('░'));
-  console.log(c('  ░') + '   ' + chalk.gray('Personal Claude Code Setup · dan1d') + '   ' + c('░'));
+  console.log(c('  ░') + '   ' + chalk.gray('Claude Code Setup Installer') + '          ' + c('░'));
   console.log(c('  ░') + '                                        ' + c('░'));
   console.log(c('  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░'));
   console.log('');
@@ -105,7 +105,8 @@ async function main(opts = {}) {
 
   if (allOk) {
     console.log(chalk.cyan('╔══════════════════════════════════════════════╗'));
-    console.log(chalk.cyan('║') + chalk.green.bold('  🎉  All done. Welcome back, dan1d.          ') + chalk.cyan('║'));
+    const user = require('os').userInfo().username;
+    console.log(chalk.cyan('║') + chalk.green.bold(`  🎉  All done. Welcome back, ${user}.`.padEnd(46)) + chalk.cyan('║'));
     console.log(chalk.cyan('╚══════════════════════════════════════════════╝'));
   } else {
     const failed = results.filter(r => !r.ok).map(r => r.step).join(', ');

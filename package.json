@@ -1,7 +1,7 @@
 {
   "name": "@dan1d/claude-ninja",
   "version": "1.0.0",
-  "description": "Personal Claude Code setup — dan1d",
+  "description": "Claude Code setup installer — agents, commands, hooks & Obsidian integration",
   "bin": {
     "claude-ninja": "bin/cli.js"
   },

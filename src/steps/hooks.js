@@ -106,11 +106,6 @@ async function run(root) {
       });
     }
 
-    // ── 7. Set default model to Opus ─────────────────────────────────────────
-    if (!settings.model) {
-      settings.model = 'claude-opus-4-6';
-    }
-
     fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2) + '\n', 'utf8');
 
     return {

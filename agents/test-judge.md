@@ -91,7 +91,7 @@ Hard-to-test code is usually badly designed code. If a test requires an elaborat
 5. If findings exist (WARN or FAIL), append them to the project's Known Issues in Obsidian:
 
 ```bash
-obsidian vault="TheOwnerStack" append path="<ProjectName>/Meta/Known Issues.md" content="
+obsidian vault="$OBSIDIAN_VAULT" append path="<ProjectName>/Meta/Known Issues.md" content="
 ## Test Judge — <date>
 <findings as bullet list>
 "

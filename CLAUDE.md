@@ -1,8 +1,8 @@
 # claude-ninja — Claude Code Context
 
-**Node.js CLI · Private · github.com/dan1d/claude-ninja**
+**Node.js CLI · github.com/dan1d/claude-ninja**
 
-Personal Claude Code configuration backup and installer for dan1d. Installs agents, commands, Obsidian skill, AgentKits Memory MCP, and vault notes on any new machine.
+Claude Code configuration installer. Ships agents, commands, Obsidian skill, AgentKits Memory MCP, and vault note templates — installed on any machine with one command.
 
 ## Install command
 

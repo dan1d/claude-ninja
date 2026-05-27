@@ -3,7 +3,19 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLAUDE_DIR="$HOME/.claude"
-OBSIDIAN_VAULT="$HOME/Documents/obsidian/TheOwnerStack"
+
+# Prompt for vault name (or skip if non-interactive)
+if [ -t 0 ]; then
+  read -r -p "  Obsidian vault name (leave empty to skip): " VAULT_NAME
+else
+  VAULT_NAME=""
+fi
+
+if [ -n "$VAULT_NAME" ]; then
+  OBSIDIAN_VAULT="$HOME/Documents/obsidian/$VAULT_NAME"
+else
+  OBSIDIAN_VAULT=""
+fi
 
 echo ""
 echo "=================================="
@@ -62,48 +74,29 @@ echo "      NOTE: After install, run /plugins in Claude Code and enable 'obsidia
 # ──────────────────────────────────────
 echo ""
 echo "[3/4] Installing Obsidian vault notes..."
-if [ -d "$OBSIDIAN_VAULT" ]; then
-  cp "$SCRIPT_DIR/obsidian/TheOwnerStack/Project Guidelines.md" "$OBSIDIAN_VAULT/Project Guidelines.md"
-  cp -r "$SCRIPT_DIR/obsidian/TheOwnerStack/LeadFound" "$OBSIDIAN_VAULT/"
-  if [ -d "$SCRIPT_DIR/obsidian/TheOwnerStack/PaydayBooks" ]; then
-    cp -r "$SCRIPT_DIR/obsidian/TheOwnerStack/PaydayBooks" "$OBSIDIAN_VAULT/"
-  fi
+# Find the first subdirectory under obsidian/ as the source
+VAULT_SRC_DIR=$(find "$SCRIPT_DIR/obsidian" -mindepth 1 -maxdepth 1 -type d | head -1)
+
+if [ -z "$OBSIDIAN_VAULT" ]; then
+  echo "      SKIPPED — no vault name provided"
+elif [ -z "$VAULT_SRC_DIR" ]; then
+  echo "      SKIPPED — no obsidian/ notes in repo"
+elif [ -d "$OBSIDIAN_VAULT" ]; then
+  cp -rn "$VAULT_SRC_DIR/"* "$OBSIDIAN_VAULT/" 2>/dev/null || true
   echo "      Vault notes installed to $OBSIDIAN_VAULT"
 else
   echo "      SKIPPED — $OBSIDIAN_VAULT does not exist."
   echo "      To install manually:"
-  echo "        1. Open Obsidian and create/open the TheOwnerStack vault at $OBSIDIAN_VAULT"
+  echo "        1. Open Obsidian and create/open a vault at $OBSIDIAN_VAULT"
   echo "        2. Re-run this script, or manually copy:"
-  echo "             $SCRIPT_DIR/obsidian/TheOwnerStack/ → $OBSIDIAN_VAULT/"
+  echo "             $VAULT_SRC_DIR/ → $OBSIDIAN_VAULT/"
 fi
 
 # ──────────────────────────────────────
-# 4. Memory files
+# 4. Memory files (see step 7 for interactive install)
 # ──────────────────────────────────────
 echo ""
-echo "[4/4] Memory files — manual step required"
-echo ""
-echo "      Memory files are project-workspace-specific. Claude Code stores them at:"
-echo "        ~/.claude/projects/<encoded-path>/memory/"
-echo ""
-echo "      The encoded path is derived from the absolute workspace path, with '/' replaced by '-'."
-echo ""
-echo "      TheOwnerStack workspace memory:"
-echo "        Source: $SCRIPT_DIR/memory/theownerstack/"
-echo "        Install to (adjust <your-username> if needed):"
-echo "          ~/.claude/projects/-Users-<your-username>-claude-projects-theownerstack/memory/"
-echo ""
-echo "      PaydayBooks workspace memory:"
-echo "        Source: $SCRIPT_DIR/memory/paydaybooks/"
-echo "        Install to:"
-echo "          ~/.claude/projects/-Users-<your-username>-claude-projects-theownerstack-shopify-project/memory/"
-echo ""
-echo "      Example (replace 'r1' with your username):"
-echo "        mkdir -p ~/.claude/projects/-Users-r1-claude-projects-theownerstack/memory/"
-echo "        cp $SCRIPT_DIR/memory/theownerstack/* ~/.claude/projects/-Users-r1-claude-projects-theownerstack/memory/"
-echo ""
-echo "        mkdir -p ~/.claude/projects/-Users-r1-claude-projects-theownerstack-shopify-project/memory/"
-echo "        cp $SCRIPT_DIR/memory/paydaybooks/* ~/.claude/projects/-Users-r1-claude-projects-theownerstack-shopify-project/memory/"
+echo "[4/4] Memory files — will prompt interactively in step 7"
 
 # ──────────────────────────────────────
 # 5. AgentKits Memory (MCP server)
@@ -124,14 +117,16 @@ echo ""
 echo "[6] Setting OBSIDIAN_VAULT in shell profile..."
 SHELL_RC="$HOME/.zshrc"
 [ -f "$HOME/.bashrc" ] && SHELL_RC="$HOME/.bashrc"
-VAULT_LINE="export OBSIDIAN_VAULT=\"$HOME/Documents/obsidian/TheOwnerStack\""
-if ! grep -q "OBSIDIAN_VAULT" "$SHELL_RC" 2>/dev/null; then
+if [ -z "$VAULT_NAME" ]; then
+  echo "      SKIPPED — no vault name provided"
+elif grep -q "OBSIDIAN_VAULT" "$SHELL_RC" 2>/dev/null; then
+  echo "      Already set in $SHELL_RC — skipping"
+else
+  VAULT_LINE="export OBSIDIAN_VAULT=\"$HOME/Documents/obsidian/$VAULT_NAME\""
   echo "" >> "$SHELL_RC"
   echo "# claude-ninja" >> "$SHELL_RC"
   echo "$VAULT_LINE" >> "$SHELL_RC"
   echo "      Added to $SHELL_RC — run: source $SHELL_RC"
-else
-  echo "      Already set in $SHELL_RC — skipping"
 fi
 
 # ──────────────────────────────────────
@@ -140,20 +135,36 @@ fi
 echo ""
 echo "[7] Installing memory files..."
 USERNAME=$(whoami)
-TOS_MEM="$HOME/.claude/projects/-Users-${USERNAME}-claude-projects-theownerstack/memory"
-PB_MEM="$HOME/.claude/projects/-Users-${USERNAME}-claude-projects-theownerstack-shopify-project/memory"
 
-mkdir -p "$TOS_MEM"
-cp "$SCRIPT_DIR/memory/theownerstack/"* "$TOS_MEM/"
-echo "      Installed theownerstack memory → $TOS_MEM"
+# List available memory directories and prompt for each
+for MEM_DIR in "$SCRIPT_DIR"/memory/*/; do
+  [ -d "$MEM_DIR" ] || continue
+  MEM_NAME=$(basename "$MEM_DIR")
+  MEM_COUNT=$(find "$MEM_DIR" -name '*.md' -maxdepth 1 | wc -l | tr -d ' ')
+  [ "$MEM_COUNT" -gt 0 ] || continue
 
-mkdir -p "$PB_MEM"
-cp "$SCRIPT_DIR/memory/paydaybooks/"* "$PB_MEM/"
-echo "      Installed paydaybooks memory   → $PB_MEM"
+  if [ -t 0 ]; then
+    read -r -p "      Install \"$MEM_NAME\" memory ($MEM_COUNT files)? Requires workspace path. [y/N] " INSTALL_MEM
+    if [[ "$INSTALL_MEM" =~ ^[Yy]$ ]]; then
+      read -r -p "      Absolute path to \"$MEM_NAME\" workspace: " WORKSPACE_PATH
+      if [ -n "$WORKSPACE_PATH" ]; then
+        ENCODED=$(echo "$WORKSPACE_PATH" | tr '/' '-')
+        DEST="$HOME/.claude/projects/$ENCODED/memory"
+        mkdir -p "$DEST"
+        cp "$MEM_DIR"*.md "$DEST/" 2>/dev/null || true
+        echo "      Installed $MEM_NAME memory → $DEST"
+      fi
+    fi
+  else
+    echo "      Skipped $MEM_NAME (non-interactive mode)"
+  fi
+done
 
 echo ""
-echo "      NOTE: These paths assume your projects live at ~/claude-projects/theownerstack/"
-echo "      If they're elsewhere, copy manually from $SCRIPT_DIR/memory/"
+echo "      To install memory manually later:"
+echo "        1. Encode your workspace path (replace / with -)"
+echo "        2. mkdir -p ~/.claude/projects/<encoded-path>/memory/"
+echo "        3. cp memory/<name>/* into that directory"
 
 # ──────────────────────────────────────
 # 7b. Auto-route PostToolUse hook
@@ -247,5 +258,5 @@ echo "  Per-project setup (one time per repo):"
 echo "    echo 'ProjectName' > .claude/obsidian-project"
 echo "    git add .claude/ && git commit -m 'Add claude-ninja integration'"
 echo ""
-echo "Done. Welcome back, dan1d."
+echo "Done. Welcome back, $(whoami)."
 echo ""

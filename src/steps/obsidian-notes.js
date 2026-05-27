@@ -2,6 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const inquirer = require('inquirer');
 
 function copyDirRecursiveNonDestructive(src, dest) {
   fs.mkdirSync(dest, { recursive: true });
@@ -27,26 +28,59 @@ function copyDirRecursiveNonDestructive(src, dest) {
   return { copied, skipped };
 }
 
+function findVaultSrc(root) {
+  const obsidianDir = path.join(root, 'obsidian');
+  if (!fs.existsSync(obsidianDir)) return null;
+  const entries = fs.readdirSync(obsidianDir, { withFileTypes: true });
+  const dirs = entries.filter(e => e.isDirectory());
+  return dirs.length > 0 ? path.join(obsidianDir, dirs[0].name) : null;
+}
+
 async function run(root) {
   try {
-    const src = path.join(root, 'obsidian', 'TheOwnerStack');
-    const dest = path.join(os.homedir(), 'Documents', 'obsidian', 'TheOwnerStack');
-
-    if (!fs.existsSync(src)) {
+    const src = findVaultSrc(root);
+    if (!src) {
       return { ok: true, message: 'skipped (no obsidian/ in repo)' };
     }
 
-    if (!fs.existsSync(path.join(os.homedir(), 'Documents', 'obsidian'))) {
+    const obsidianBase = path.join(os.homedir(), 'Documents', 'obsidian');
+    if (!fs.existsSync(obsidianBase)) {
       return {
         ok: true,
-        message: 'skipped — Vault directory not found (open Obsidian first and create TheOwnerStack vault)',
+        message: 'skipped — ~/Documents/obsidian/ not found (open Obsidian first and create a vault)',
       };
     }
 
+    let vaultName = '';
+    if (process.stdin.isTTY) {
+      const existing = fs.readdirSync(obsidianBase, { withFileTypes: true })
+        .filter(e => e.isDirectory())
+        .map(e => e.name);
+
+      if (existing.length === 1) {
+        vaultName = existing[0];
+      } else if (existing.length > 1) {
+        const { name } = await inquirer.prompt([
+          {
+            type: 'list',
+            name: 'name',
+            message: 'Which Obsidian vault should receive the notes?',
+            choices: [...existing, '(skip)'],
+          },
+        ]);
+        vaultName = name === '(skip)' ? '' : name;
+      }
+    }
+
+    if (!vaultName) {
+      return { ok: true, message: 'skipped (no vault selected)' };
+    }
+
+    const dest = path.join(obsidianBase, vaultName);
     const { copied, skipped } = copyDirRecursiveNonDestructive(src, dest);
 
     const msg = copied > 0
-      ? `${copied} notes → ~/Documents/obsidian/TheOwnerStack/${skipped > 0 ? ` (${skipped} already present, skipped)` : ''}`
+      ? `${copied} notes → ~/Documents/obsidian/${vaultName}/${skipped > 0 ? ` (${skipped} already present, skipped)` : ''}`
       : `all ${skipped} already present — nothing to do`;
 
     return { ok: true, message: msg };

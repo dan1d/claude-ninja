@@ -123,7 +123,7 @@ find . -iname "*design*prompt*" -o -iname "*design*spec*" -o -iname "*.figma*" |
 find . -name "_app.ts" -o -name "routes.rb" -o -name "openapi*" | head -5
 
 # Obsidian project notes (if OBSIDIAN_VAULT is set)
-ls "$HOME/Documents/obsidian/TheOwnerStack/$(cat .claude/obsidian-project 2>/dev/null)/" 2>/dev/null
+ls "${OBSIDIAN_VAULT:-$HOME/Documents/obsidian}/$(cat .claude/obsidian-project 2>/dev/null)/" 2>/dev/null
 ```
 
 For each dead element, produce a behavior spec:
@@ -177,7 +177,7 @@ Group findings by priority phase:
 
 Write the full audit to:
 ```
-~/Documents/obsidian/TheOwnerStack/{project}/Dev/Audit — {date}.md
+$OBSIDIAN_VAULT/{project}/Dev/Audit — {date}.md
 ```
 
 ## Element Status Taxonomy
