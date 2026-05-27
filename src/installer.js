@@ -10,7 +10,6 @@ const STEPS = [
   { key: 'commands',      label: 'Commands',           mod: './steps/commands' },
   { key: 'obsidian-skill',label: 'Obsidian skill',    mod: './steps/obsidian-skill' },
   { key: 'obsidian-notes',label: 'Obsidian notes',    mod: './steps/obsidian-notes' },
-  { key: 'memory-mcp',    label: 'AgentKits Memory',  mod: './steps/memory-mcp' },
   { key: 'env-var',       label: 'OBSIDIAN_VAULT',    mod: './steps/env-var' },
   { key: 'memory-files',  label: 'Memory files',      mod: './steps/memory-files' },
   { key: 'hooks',         label: 'Auto-route hook',   mod: './steps/hooks' },

@@ -81,13 +81,6 @@ function writeMcpConfig() {
     added++;
   }
 
-  if (!settings.mcpServers.memory) {
-    settings.mcpServers.memory = {
-      command: 'npx',
-      args: ['-y', '@aitytech/agentkits-memory', 'server'],
-    };
-    added++;
-  }
 
   fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2) + '\n', 'utf8');
   return added;
