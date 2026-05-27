@@ -39,6 +39,8 @@ npx github:dan1d/claude-ninja
         ├─► steps/memory-mcp.js      — npx @aitytech/agentkits-memory (from $HOME)
         ├─► steps/env-var.js         — OBSIDIAN_VAULT → ~/.zshrc
         ├─► steps/memory-files.js    — copy memory to ~/.claude/projects/.../memory/
+        ├─► steps/hooks.js           — install auto-route + task gate hooks
+        ├─► steps/mempalace.js       — install mempalace, MCP server + auto hooks
         ├─► steps/github-auth.js     — check gh auth, prompt login if needed
         └─► steps/obsidian-app.js    — check Obsidian running, offer to launch
 ```

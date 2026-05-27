@@ -96,7 +96,8 @@ function main() {
         `   - Add key decisions or findings as sub-bullets\n` +
         `   Example:\n` +
         `     - [x] [task name] — Done: ${taskDate}\n` +
-        `       - [key decision or finding]\n`
+        `       - [key decision or finding]\n\n` +
+        `5. AUTO-SAVE checkpoint. Save key topics, decisions, quotes, and code from this session to your memory system. Organize into appropriate categories. Use verbatim quotes where possible. Continue conversation after saving.\n`
       );
     } catch (_) {
       process.exit(0);
