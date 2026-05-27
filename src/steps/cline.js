@@ -18,6 +18,10 @@ const SKILL_META = {
     name: 'marketing',
     description: 'Route to the appropriate marketing agent based on the current task context.',
   },
+  'init.md': {
+    name: 'init',
+    description: 'Scan the current project, read docs, and generate a dev-focused Obsidian vault scaffold with architecture summary and Dev Tracker.',
+  },
 };
 
 function copyAgents(root, opts) {

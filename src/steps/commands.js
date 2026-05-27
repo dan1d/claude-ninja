@@ -39,7 +39,7 @@ async function run(root, opts = {}) {
     const dest = path.join(os.homedir(), '.claude', 'commands');
     fs.mkdirSync(dest, { recursive: true });
 
-    const topLevelFiles = ['plan.md', 'e2e.md', 'marketing.md'];
+    const topLevelFiles = ['plan.md', 'e2e.md', 'marketing.md', 'init.md'];
     let copied = 0;
     let skipped = 0;
     let updated = 0;

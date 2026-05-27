@@ -17,7 +17,7 @@ npx github:dan1d/claude-ninja --update   # overwrite agents, commands, hooks, pl
 |------|----------|
 | `agents/` | 42 dev agents (base) |
 | `agents/marketing/` | 20 marketing agents (AgentKits Marketing) |
-| `commands/` | 3 global commands: plan, e2e, marketing |
+| `commands/` | 4 global commands: plan, e2e, marketing, init |
 | `plugins/obsidian-skills/` | Obsidian CLI skill plugin |
 | `memory/theownerstack/` | Workspace memory for theownerstack projects |
 | `memory/paydaybooks/` | Workspace memory for PaydayBooks (shopify-project) |
